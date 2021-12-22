@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsString } from 'class-validator';
 
-export class VerificationDto {
+export class ConnectionDto {
   @IsNotEmpty()
   @IsString()
   address: string;
