@@ -6,7 +6,7 @@ import { ConfigModule } from '@nestjs/config';
 import { LoginsModule } from './logins/logins.module';
 
 @Module({
-  imports: [ConnectionsModule, ConfigModule.forRoot(), LoginsModule],
+  imports: [ConfigModule.forRoot(), ConnectionsModule, LoginsModule],
   controllers: [AppController],
   providers: [AppService],
 })
