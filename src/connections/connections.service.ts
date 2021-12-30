@@ -1,18 +1,31 @@
 import { Injectable } from '@nestjs/common';
 
-import { ConnectionDto } from './dto/connection.dto';
+import {
+  TelegramConnectionDto,
+  TwitterConnectionDto,
+} from './dto/connection.dto';
 import axios from 'axios';
+import TwitterOauth from 'src/lib/twitterOauth';
+import TwitterApi from 'src/lib/twitterAPI';
 
 @Injectable()
 export class ConnectionsService {
-  async twitter(connectionDto: ConnectionDto) {
+  async twitter(connectionDto: TwitterConnectionDto) {
     // const tx = await Endorsement.send(connectionDto.address, 10);
     // return tx;
-    return this.createEntity(connectionDto);
+    const data = (await TwitterOauth.getAccessToken(connectionDto)) as any;
+    const twitterId = data.results.user_id;
+    // await this.createEntity(twitterId, connectionDto.address);
+    await this.createRelations(twitterId, connectionDto.address);
+    return true;
   }
 
-  async createEntity(connectionDto: ConnectionDto) {
-    const twitterData = { username: 'twitterDev', id: 2933343, profile: 'url' };
+  async telegram(connectionDto: TelegramConnectionDto) {
+    return true;
+  }
+
+  async createEntity(id: string, address: string) {
+    const twitterData = await TwitterApi.getUser(id);
     try {
       const result = await axios.post(
         `${process.env.CORE_API_URL}/entity`,
@@ -20,18 +33,18 @@ export class ConnectionsService {
           name: twitterData.username,
           type: 'Address',
           ids: {
-            uuid: connectionDto.address,
-            address: connectionDto.address,
+            uuid: address,
+            address: address,
             twitter: twitterData.id,
           },
-          image: twitterData.profile,
+          image: twitterData.profile_image_url,
           properties: {
             twitter_username: twitterData.username,
           },
         },
         {
           headers: {
-            'UTU-Trust-Api-Client-Id': connectionDto.clientId,
+            'UTU-Trust-Api-Client-Id': '4YcU3qARJbMSg7Ma5i3a0e',
           },
         },
       );
@@ -40,5 +53,12 @@ export class ConnectionsService {
       console.log(e);
       return e.response?.data || e.message;
     }
+  }
+
+  async createRelations(id: string, address: string) {
+    const followers = await TwitterApi.getFollowers(id);
+    // console.log(followers);
+    const following = await TwitterApi.getFollowings(id);
+    console.log(following);
   }
 }
