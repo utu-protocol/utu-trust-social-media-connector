@@ -5,7 +5,7 @@ import {
   TwitterConnectionDto,
 } from './dto/connection.dto';
 import axios from 'axios';
-import TwitterOauth from 'src/lib/twitterOauth';
+import TwitterOauth, { OathCredentials } from 'src/lib/twitterOauth';
 import TwitterApi from 'src/lib/twitterAPI';
 
 @Injectable()
@@ -15,8 +15,12 @@ export class ConnectionsService {
     // return tx;
     const data = (await TwitterOauth.getAccessToken(connectionDto)) as any;
     const twitterId = data.results.user_id;
+    const credentials = {
+      token: data.oauth_access_token,
+      token_secret: data.oauth_access_token_secret,
+    };
     // await this.createEntity(twitterId, connectionDto.address);
-    await this.createRelations(twitterId, connectionDto.address);
+    await this.createRelations(credentials, twitterId, connectionDto.address);
     return true;
   }
 
@@ -55,10 +59,14 @@ export class ConnectionsService {
     }
   }
 
-  async createRelations(id: string, address: string) {
-    const followers = await TwitterApi.getFollowers(id);
-    // console.log(followers);
-    const following = await TwitterApi.getFollowings(id);
+  async createRelations(
+    credentials: OathCredentials,
+    id: string,
+    address: string,
+  ) {
+    const followers = await TwitterApi.getFollowers(credentials, id);
+    console.log(followers);
+    const following = await TwitterApi.getFollowings(credentials, id);
     console.log(following);
   }
 }
