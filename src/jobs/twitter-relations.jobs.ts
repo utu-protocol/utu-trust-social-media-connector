@@ -17,10 +17,15 @@ export class TwitterRelationConsumer {
   @Process()
   async transcode(job: Job<TwitterRelationData>) {
     const { type } = job.data;
+    console.log('processing jobs');
     if (type === 'FOLLOWERS') {
-      return this.processFollowers(job.data);
+      await this.processFollowers(job.data);
+      await job.progress(100);
+      return true;
     }
-    return this.processFollowing(job.data);
+    await this.processFollowing(job.data);
+    await job.progress(100);
+    return true;
   }
 
   async processFollowers({
@@ -104,6 +109,7 @@ export class TwitterRelationConsumer {
               },
             },
           );
+          console.log('saved');
           return result;
         } catch (e) {
           console.log(e.message);

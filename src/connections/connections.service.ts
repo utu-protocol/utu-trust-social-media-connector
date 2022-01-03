@@ -25,18 +25,14 @@ export class ConnectionsService {
       token: data.oauth_access_token,
       token_secret: data.oauth_access_token_secret,
     };
-    const entity = await this.createEntity(
-      twitterId,
-      connectionDto.address,
-      clientId,
-    );
+    await this.createEntity(twitterId, connectionDto.address, clientId);
     await this.createRelations(
       credentials,
       twitterId,
       connectionDto.address,
       clientId,
     );
-    return entity;
+    return data;
   }
 
   async telegram(connectionDto: TelegramConnectionDto, clientId: string) {
@@ -67,6 +63,7 @@ export class ConnectionsService {
           },
         },
       );
+      console.log('saved');
       return result;
     } catch (e) {
       console.log(e);
