@@ -21,7 +21,7 @@ export default class TwitterApi {
     id: string,
     limit = 200,
     nextToken?: string,
-  ) {
+  ): Promise<any> {
     const data = await TwitterOauth.get(
       credentials,
       `https://api.twitter.com/2/users/${id}/followers`,
@@ -38,7 +38,7 @@ export default class TwitterApi {
     id: string,
     limit = 200,
     nextToken?: string,
-  ) {
+  ): Promise<any> {
     const data = await TwitterOauth.get(
       credentials,
       `https://api.twitter.com/2/users/${id}/following`,
