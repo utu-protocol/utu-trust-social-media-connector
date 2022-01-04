@@ -15,7 +15,7 @@ export class ConnectionsController {
     @Body() connectionDto: TwitterConnectionDto,
     @Req() request: Request,
   ) {
-    const clientId = String(request.headers['UTU-Trust-Api-Client-Id']);
+    const clientId = String(request.headers['utu-trust-api-client-id']);
     return this.connectionsService.twitter(connectionDto, clientId);
   }
 
@@ -24,7 +24,7 @@ export class ConnectionsController {
     @Body() connectionDto: TelegramConnectionDto,
     @Req() request: Request,
   ) {
-    const clientId = String(request.headers['UTU-Trust-Api-Client-Id']);
+    const clientId = String(request.headers['utu-trust-api-client-id']);
     return this.connectionsService.twitter(connectionDto, clientId);
   }
 }

@@ -15,7 +15,7 @@ export class RelationshipConsumer {
     console.log('running save job');
     await axios.post(`${process.env.CORE_API_URL}/relationship`, relation, {
       headers: {
-        'UTU-Trust-Api-Client-Id': clientId,
+        'utu-trust-api-client-id': clientId,
       },
     });
     console.log('saved');

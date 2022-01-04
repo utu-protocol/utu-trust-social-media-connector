@@ -59,7 +59,7 @@ export class ConnectionsService {
         },
         {
           headers: {
-            'UTU-Trust-Api-Client-Id': clientId,
+            'utu-trust-api-client-id': clientId,
           },
         },
       );
