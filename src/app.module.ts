@@ -5,8 +5,6 @@ import { ConnectionsModule } from './connections/connections.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoginsModule } from './logins/logins.module';
 import { BullModule } from '@nestjs/bull';
-import { join } from 'path';
-import { TwitterRelationConsumer } from './jobs/twitter-relations.jobs';
 @Module({
   imports: [
     ConfigModule.forRoot(),
@@ -20,6 +18,6 @@ import { TwitterRelationConsumer } from './jobs/twitter-relations.jobs';
     LoginsModule,
   ],
   controllers: [AppController],
-  providers: [AppService, TwitterRelationConsumer],
+  providers: [AppService],
 })
 export class AppModule {}

@@ -86,7 +86,6 @@ export class ConnectionsService {
     });
 
     await this.twitterRelationsQueue.add({
-      credentials,
       id,
       address,
       type: 'FOLLOWING',

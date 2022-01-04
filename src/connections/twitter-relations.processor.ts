@@ -1,6 +1,5 @@
-import { Processor, Process } from '@nestjs/bull';
-import axios from 'axios';
-import { Job } from 'bull';
+import { Processor, Process, InjectQueue } from '@nestjs/bull';
+import { Job, Queue } from 'bull';
 import TwitterApi from 'src/lib/twitterAPI';
 import { OathCredentials } from 'src/lib/twitterOauth';
 
@@ -14,7 +13,11 @@ type TwitterRelationData = {
 
 @Processor('twitter-relations')
 export class TwitterRelationConsumer {
-  @Process()
+  constructor(
+    @InjectQueue('save-relationship') private saveRelationshipQueue: Queue,
+  ) {}
+
+  @Process({ concurrency: 50 })
   async transcode(job: Job<TwitterRelationData>) {
     const { type } = job.data;
     console.log('processing jobs');
@@ -99,22 +102,11 @@ export class TwitterRelationConsumer {
   private async sendRequests(relations: any[], clientId: string) {
     await Promise.all(
       relations.map(async (relation) => {
-        try {
-          const result = await axios.post(
-            `${process.env.CORE_API_URL}/relationship`,
-            relation,
-            {
-              headers: {
-                'utu-trust-api-client-id': clientId,
-              },
-            },
-          );
-          console.log('saved');
-          return result;
-        } catch (e) {
-          console.log(e.message);
-          return null;
-        }
+        await this.saveRelationshipQueue.add({
+          relation,
+          clientId,
+        });
+        return relation;
       }),
     );
   }
