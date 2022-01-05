@@ -2,8 +2,26 @@
     {
         "inputs": [],
         "stateMutability": "nonpayable",
-        "type": "constructor",
-        "signature": "constructor"
+        "type": "constructor"
+    },
+    {
+        "anonymous": false,
+        "inputs": [
+            {
+                "indexed": true,
+                "internalType": "address",
+                "name": "_user",
+                "type": "address"
+            },
+            {
+                "indexed": true,
+                "internalType": "uint256",
+                "name": "_socialId",
+                "type": "uint256"
+            }
+        ],
+        "name": "AddConnection",
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -28,8 +46,7 @@
             }
         ],
         "name": "Approval",
-        "type": "event",
-        "signature": "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -60,8 +77,7 @@
             }
         ],
         "name": "Endorse",
-        "type": "event",
-        "signature": "0x356571a6ca8e1a8f7edf47ba7ce9380ec968da38147ce468113dc66d6120e557"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -80,8 +96,7 @@
             }
         ],
         "name": "OwnershipTransferred",
-        "type": "event",
-        "signature": "0x8be0079c531659141344cd1fd0a4f28419497f9722a3daafe3b4186f6b6457e0"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -94,86 +109,7 @@
             }
         ],
         "name": "Paused",
-        "type": "event",
-        "signature": "0x62e78cea01bee320cd4e420270b5ea74000d11b0c9f74754ebdbfc544b05a258"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "previousAdminRole",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "newAdminRole",
-                "type": "bytes32"
-            }
-        ],
-        "name": "RoleAdminChanged",
-        "type": "event",
-        "signature": "0xbd79b86ffe0ab8e8776151514217cd7cacd52c909f66475c3af44e129f0b00ff"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            }
-        ],
-        "name": "RoleGranted",
-        "type": "event",
-        "signature": "0x2f8788117e7eff1d82e926ec794901d17c78024a50270940304540a733656f0d"
-    },
-    {
-        "anonymous": false,
-        "inputs": [
-            {
-                "indexed": true,
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            },
-            {
-                "indexed": true,
-                "internalType": "address",
-                "name": "sender",
-                "type": "address"
-            }
-        ],
-        "name": "RoleRevoked",
-        "type": "event",
-        "signature": "0xf6391f5c32d9c69d2a47ea670b442974b53935d1edc7fd64eb21e047a839171b"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -198,8 +134,7 @@
             }
         ],
         "name": "Transfer",
-        "type": "event",
-        "signature": "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef"
+        "type": "event"
     },
     {
         "anonymous": false,
@@ -212,53 +147,25 @@
             }
         ],
         "name": "Unpaused",
-        "type": "event",
-        "signature": "0x5db9ee0a495bf2e6ff9c91a7834c1ba4fdd244a5e8aa4e537bd38aeae4b073aa"
+        "type": "event"
     },
     {
-        "inputs": [],
-        "name": "DEFAULT_ADMIN_ROLE",
-        "outputs": [
+        "inputs": [
             {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            },
+            {
+                "internalType": "uint256",
+                "name": "socialId",
+                "type": "uint256"
             }
         ],
-        "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0xa217fddf"
-    },
-    {
-        "inputs": [],
-        "name": "MINTER_ROLE",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0xd5391393"
-    },
-    {
-        "inputs": [],
-        "name": "PAUSER_ROLE",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0xe63ab1e9"
+        "name": "addConnection",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
         "inputs": [
@@ -282,9 +189,7 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0xdd62ed3e"
+        "type": "function"
     },
     {
         "inputs": [
@@ -308,8 +213,7 @@
             }
         ],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x095ea7b3"
+        "type": "function"
     },
     {
         "inputs": [
@@ -328,9 +232,7 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x70a08231"
+        "type": "function"
     },
     {
         "inputs": [
@@ -343,8 +245,7 @@
         "name": "burn",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x42966c68"
+        "type": "function"
     },
     {
         "inputs": [
@@ -362,8 +263,7 @@
         "name": "burnFrom",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x79cc6790"
+        "type": "function"
     },
     {
         "inputs": [],
@@ -376,9 +276,7 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x313ce567"
+        "type": "function"
     },
     {
         "inputs": [
@@ -402,8 +300,7 @@
             }
         ],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0xa457c2d7"
+        "type": "function"
     },
     {
         "inputs": [
@@ -421,74 +318,7 @@
         "name": "endorse",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x10d13b77"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            }
-        ],
-        "name": "getRoleAdmin",
-        "outputs": [
-            {
-                "internalType": "bytes32",
-                "name": "",
-                "type": "bytes32"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x248a9ca3"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "grantRole",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x2f2ff15d"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "hasRole",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x91d14854"
+        "type": "function"
     },
     {
         "inputs": [
@@ -512,8 +342,7 @@
             }
         ],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x39509351"
+        "type": "function"
     },
     {
         "inputs": [],
@@ -526,9 +355,7 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x06fdde03"
+        "type": "function"
     },
     {
         "inputs": [],
@@ -541,17 +368,14 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x8da5cb5b"
+        "type": "function"
     },
     {
         "inputs": [],
         "name": "pause",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x8456cb59"
+        "type": "function"
     },
     {
         "inputs": [],
@@ -564,76 +388,27 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x5c975abb"
+        "type": "function"
+    },
+    {
+        "inputs": [
+            {
+                "internalType": "address",
+                "name": "user",
+                "type": "address"
+            }
+        ],
+        "name": "removeConnection",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
     },
     {
         "inputs": [],
         "name": "renounceOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x715018a6"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "renounceRole",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x36568abe"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes32",
-                "name": "role",
-                "type": "bytes32"
-            },
-            {
-                "internalType": "address",
-                "name": "account",
-                "type": "address"
-            }
-        ],
-        "name": "revokeRole",
-        "outputs": [],
-        "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0xd547741f"
-    },
-    {
-        "inputs": [
-            {
-                "internalType": "bytes4",
-                "name": "interfaceId",
-                "type": "bytes4"
-            }
-        ],
-        "name": "supportsInterface",
-        "outputs": [
-            {
-                "internalType": "bool",
-                "name": "",
-                "type": "bool"
-            }
-        ],
-        "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x01ffc9a7"
+        "type": "function"
     },
     {
         "inputs": [],
@@ -646,9 +421,7 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x95d89b41"
+        "type": "function"
     },
     {
         "inputs": [],
@@ -661,9 +434,7 @@
             }
         ],
         "stateMutability": "view",
-        "type": "function",
-        "constant": true,
-        "signature": "0x18160ddd"
+        "type": "function"
     },
     {
         "inputs": [
@@ -687,8 +458,7 @@
             }
         ],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0xa9059cbb"
+        "type": "function"
     },
     {
         "inputs": [
@@ -717,8 +487,7 @@
             }
         ],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x23b872dd"
+        "type": "function"
     },
     {
         "inputs": [
@@ -731,15 +500,13 @@
         "name": "transferOwnership",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0xf2fde38b"
+        "type": "function"
     },
     {
         "inputs": [],
         "name": "unpause",
         "outputs": [],
         "stateMutability": "nonpayable",
-        "type": "function",
-        "signature": "0x3f4ba83a"
+        "type": "function"
     }
 ]

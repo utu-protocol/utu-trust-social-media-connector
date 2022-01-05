@@ -3,7 +3,7 @@ import Web3 from 'web3';
 const Web3HttpProvider = require('web3-providers-http');
 import UTTAbi from '../contracts/UTT.abi.json';
 
-export default class Endorsement {
+export default class UTTHandler {
   static options = {
     timeout: 30000, // ms
 
@@ -42,7 +42,7 @@ export default class Endorsement {
     this.web3.eth.defaultAccount = this.web3.eth.accounts.wallet[0].address;
   }
 
-  static async send(address: string, amount: number) {
+  static async endorse(address: string, amount: number) {
     this.init();
 
     const block = await this.web3.eth.getBlock('latest');
@@ -55,6 +55,23 @@ export default class Endorsement {
     const value = this.web3.utils.toWei(String(amount), 'ether');
 
     const tx = await contract.methods.endorse(address, value).send({
+      from: this.account.address,
+      gas,
+    });
+    return tx;
+  }
+
+  static async addConnection(address: string, socialId: number) {
+    this.init();
+
+    const block = await this.web3.eth.getBlock('latest');
+    const gas = block.gasLimit - 100000;
+    const contract = new this.web3.eth.Contract(
+      UTTAbi as any,
+      process.env.UTT_CONTRACT_ADDRESS,
+    );
+
+    const tx = await contract.methods.addConnection(address, socialId).send({
       from: this.account.address,
       gas,
     });

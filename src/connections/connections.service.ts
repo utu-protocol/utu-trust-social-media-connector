@@ -9,6 +9,7 @@ import TwitterOauth, { OathCredentials } from 'src/lib/twitterOauth';
 import TwitterApi from 'src/lib/twitterAPI';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
+import UTTHandler from 'src/lib/UTTHandler';
 
 @Injectable()
 export class ConnectionsService {
@@ -32,6 +33,8 @@ export class ConnectionsService {
       connectionDto.address,
       clientId,
     );
+    const tx = await UTTHandler.addConnection(connectionDto.address, twitterId);
+    console.log(tx);
     return data;
   }
 
