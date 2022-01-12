@@ -16,6 +16,6 @@ export class ConnectionsController {
 
   @Post('telegram')
   telegram(@Body() connectionDto: TelegramConnectionDto) {
-    return this.connectionsService.twitter(connectionDto);
+    return this.connectionsService.telegram(connectionDto);
   }
 }

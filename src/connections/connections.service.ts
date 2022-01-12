@@ -7,6 +7,8 @@ import {
 import axios from 'axios';
 import TwitterOauth from 'src/lib/twitterOauth';
 import TwitterApi from 'src/lib/twitterAPI';
+import { Api, TelegramClient } from 'telegram';
+import { StringSession } from 'telegram/sessions';
 
 @Injectable()
 export class ConnectionsService {
@@ -21,7 +23,19 @@ export class ConnectionsService {
   }
 
   async telegram(connectionDto: TelegramConnectionDto) {
-    return true;
+    const apiId = 123456;
+    const apiHash = '123456abcdfg';
+
+    const stringSession = new StringSession(''); // fill this later with the value from session.save()
+    const client = new TelegramClient(stringSession, apiId, apiHash, {
+      connectionRetries: 5,
+    });
+
+    const result = await client.invoke(new Api.contacts.GetContacts({}));
+    console.log(result);
+
+    //create entity
+    return result;
   }
 
   async createEntity(id: string, address: string) {
