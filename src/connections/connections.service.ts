@@ -23,19 +23,23 @@ export class ConnectionsService {
   }
 
   async telegram(connectionDto: TelegramConnectionDto) {
-    const apiId = 123456;
-    const apiHash = '123456abcdfg';
+    const apiId = 9280354;
+    const apiHash = 'd811a6ea6ec6324f7c4f665c573cbd9c';
 
-    const stringSession = new StringSession(''); // fill this later with the value from session.save()
-    const client = new TelegramClient(stringSession, apiId, apiHash, {
+    console.log(`+++++   ${connectionDto.oauth_token}`);
+    const stringSession = new StringSession(connectionDto.oauth_token);
+    // console.log(stringSession);
+    const client = await new TelegramClient(stringSession, apiId, apiHash, {
       connectionRetries: 5,
     });
-
-    const result = await client.invoke(new Api.contacts.GetContacts({}));
-    console.log(result);
-
-    //create entity
-    return result;
+    await client.start(null);
+    // console.log(client);
+    await client.connect();
+    stringSession.save();
+    console.log('You should now be connected.');
+    // const result = await client.invoke(new Api.contacts.GetContacts({}));
+    // console.log(result); // prints the result
+    // create entity
   }
 
   async createEntity(id: string, address: string) {

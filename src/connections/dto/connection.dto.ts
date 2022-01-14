@@ -53,25 +53,6 @@ export class TwitterConnectionDto {
 }
 
 export class TelegramConnectionDto {
-  @ApiProperty({
-    description: 'Ethereum style address',
-  })
   @IsNotEmpty()
-  @IsString()
-  address: string;
-
-  @ApiProperty({
-    description: 'Twitter connection token',
-  })
-  @IsNotEmpty()
-  @IsString()
   oauth_token: string;
-
-  @IsNotEmpty()
-  @IsString()
-  oauth_verifier: string;
-
-  @IsNotEmpty()
-  @IsString()
-  oauth_token_secret: string;
 }
