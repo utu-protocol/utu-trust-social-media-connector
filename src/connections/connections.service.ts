@@ -28,18 +28,15 @@ export class ConnectionsService {
 
     console.log(`+++++   ${connectionDto.oauth_token}`);
     const stringSession = new StringSession(connectionDto.oauth_token);
-    // console.log(stringSession);
-    const client = await new TelegramClient(stringSession, apiId, apiHash, {
+    const client = new TelegramClient(stringSession, apiId, apiHash, {
       connectionRetries: 5,
     });
-    await client.start(null);
-    // console.log(client);
+    stringSession.save(); // Save this string to avoid logging in again
     await client.connect();
-    stringSession.save();
     console.log('You should now be connected.');
-    // const result = await client.invoke(new Api.contacts.GetContacts({}));
-    // console.log(result); // prints the result
-    // create entity
+
+    const result = await client.invoke(new Api.contacts.GetContacts({}));
+    console.log(result); // prints the result
   }
 
   async createEntity(id: string, address: string) {
