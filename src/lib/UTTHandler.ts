@@ -35,7 +35,7 @@ export default class UTTHandler {
 
     this.web3 = new Web3(provider);
     this.account = this.web3.eth.accounts.privateKeyToAccount(
-      process.env.PRIVATE_KEY,
+      process.env.UTT_PRIVATE_KEY,
     );
 
     this.web3.eth.accounts.wallet.add(this.account);
