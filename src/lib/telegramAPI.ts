@@ -49,7 +49,7 @@ export default class TelegramAPI {
                 useWSS: true,
                 connectionRetries: 5
             });
-            
+
             await client.connect();
             const {user}: any = await client.invoke(
                 new Api.auth.SignIn({
