@@ -54,5 +54,14 @@ export class TwitterConnectionDto {
 
 export class TelegramConnectionDto {
   @IsNotEmpty()
-  oauth_token: string;
+  @IsString()
+  phone_number: string
+
+  @IsNotEmpty()
+  @IsString()
+  phone_code_hash: string
+
+  @IsNotEmpty()
+  @IsString()
+  phone_code: string
 }
