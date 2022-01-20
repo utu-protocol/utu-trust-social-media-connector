@@ -1,6 +1,6 @@
-import {Body, Controller, Post} from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
 import { LoginsService } from './logins.service';
-import {TelegramTokenDto} from "./dto/telegram-login.dto";
+import { TelegramTokenDto } from './dto/telegram-login.dto';
 
 @Controller('logins')
 export class LoginsController {
@@ -12,7 +12,7 @@ export class LoginsController {
   }
 
   @Post('telegram/token')
-  telegram(@Body() tokenDto: TelegramTokenDto ) {
+  telegram(@Body() tokenDto: TelegramTokenDto) {
     return this.loginsService.telegramToken(tokenDto);
   }
 }
