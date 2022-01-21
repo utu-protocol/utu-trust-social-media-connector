@@ -5,14 +5,14 @@ export type OathCredentials = {
   token_secret: string;
 };
 export default class TwitterOauth {
-  static getOAuth() {
+  static getOAuth(callbackUrl: string = null) {
     return new OAuth(
       'https://api.twitter.com/oauth/request_token',
       'https://api.twitter.com/oauth/access_token',
       process.env.CONSUMER_KEY,
       process.env.CONSUMER_SECRET,
       '1.0',
-      process.env.FRONTEND_URL,
+      callbackUrl,
       'HMAC-SHA1',
     );
   }
@@ -28,8 +28,8 @@ export default class TwitterOauth {
     );
   }
 
-  static getRequestToken() {
-    const oa = this.getOAuth();
+  static getRequestToken(callbackUrl) {
+    const oa = this.getOAuth(callbackUrl);
     return new Promise((resolve, reject) => {
       oa.getOAuthRequestToken(
         (error, oAuthToken, oAuthTokenSecret, results) => {
