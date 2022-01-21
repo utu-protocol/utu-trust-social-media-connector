@@ -10,7 +10,7 @@ import TwitterApi from 'src/lib/twitterAPI';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import UTTHandler from 'src/lib/UTTHandler';
-import TelegramAPI from "../lib/telegramAPI";
+import TelegramAPI from '../lib/telegramAPI';
 
 @Injectable()
 export class ConnectionsService {
@@ -44,25 +44,25 @@ export class ConnectionsService {
     const contacts = await TelegramAPI.getContacts(userSession);
 
     console.log(contacts, 'contacts');
-
+    // await this.createTelegramEntity(user, 'TO-DO');
     return {
       message: 'Linking data successful!',
     };
   }
 
-  async createTelegramEntity(contacts, address: string) {
+  async createTelegramEntity(user: any, address: string) {
     try {
       const result = await axios.post(`${process.env.CORE_API_URL}/entity`, {
-        name: '',
+        name: user.username,
         type: 'Address',
         ids: {
-          uuid: address,
-          address: address,
-          telegram: '',
-          image: '',
-          properties: {
-            twitter_username: '',
-          },
+          uuid: 'ETHEREUM_ADDRESS',
+          address: 'ETHEREUM_ADDRESS',
+          twitter: user.id.value,
+        },
+        image: user.photo,
+        properties: {
+          telegram_username: user.username,
         },
       });
     } catch (e) {
