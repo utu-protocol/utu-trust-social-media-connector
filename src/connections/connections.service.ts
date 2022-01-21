@@ -33,8 +33,7 @@ export class ConnectionsService {
       connectionDto.address,
       clientId,
     );
-    const tx = await UTTHandler.addConnection(connectionDto.address, twitterId);
-    console.log(tx);
+    await UTTHandler.addConnection(connectionDto.address, twitterId);
     return data;
   }
 
@@ -66,7 +65,6 @@ export class ConnectionsService {
           },
         },
       );
-      console.log('saved');
       return result;
     } catch (e) {
       console.log(e);
