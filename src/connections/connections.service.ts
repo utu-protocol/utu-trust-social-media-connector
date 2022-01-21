@@ -5,23 +5,41 @@ import {
     TwitterConnectionDto,
 } from './dto/connection.dto';
 import axios from 'axios';
-import TwitterOauth from 'src/lib/twitterOauth';
+import TwitterOauth, { OathCredentials } from 'src/lib/twitterOauth';
 import TwitterApi from 'src/lib/twitterAPI';
+import { InjectQueue } from '@nestjs/bull';
+import { Queue } from 'bull';
+import UTTHandler from 'src/lib/UTTHandler';
 import {Api, TelegramClient} from 'telegram';
 import {StringSession} from 'telegram/sessions';
 import TelegramAPI from "../lib/telegramAPI";
 
 @Injectable()
 export class ConnectionsService {
-    async twitter(connectionDto: TwitterConnectionDto) {
-        // const tx = await Endorsement.send(connectionDto.address, 10);
-        // return tx;
-        const data = (await TwitterOauth.getAccessToken(connectionDto)) as any;
-        const twitterId = data.results.user_id;
-        // await this.createEntity(twitterId, connectionDto.address);
-        await this.createRelations(twitterId, connectionDto.address);
-        return true;
-    }
+  constructor(
+    @InjectQueue('twitter-relations') private twitterRelationsQueue: Queue,
+  ) {}
+
+  async twitter(connectionDto: TwitterConnectionDto, clientId: string) {
+    // const tx = await Endorsement.send(connectionDto.address, 10);
+    // return tx;
+    const data = (await TwitterOauth.getAccessToken(connectionDto)) as any;
+    const twitterId = data.results.user_id;
+    const credentials = {
+      token: data.oauth_access_token,
+      token_secret: data.oauth_access_token_secret,
+    };
+    await this.createEntity(twitterId, connectionDto.address, clientId);
+    await this.createRelations(
+      credentials,
+      twitterId,
+      connectionDto.address,
+      clientId,
+    );
+    const tx = await UTTHandler.addConnection(connectionDto.address, twitterId);
+    console.log(tx);
+    return data;
+  }
 
     async telegram(connectionDto: TelegramConnectionDto) {
         const {userSession, user} = await TelegramAPI.verifyCode(connectionDto);
@@ -34,41 +52,58 @@ export class ConnectionsService {
         }
     }
 
-    async createEntity(id: string, address: string) {
-        const twitterData = await TwitterApi.getUser(id);
-        try {
-            const result = await axios.post(
-                `${process.env.CORE_API_URL}/entity`,
-                {
-                    name: twitterData.username,
-                    type: 'Address',
-                    ids: {
-                        uuid: address,
-                        address: address,
-                        twitter: twitterData.id,
-                    },
-                    image: twitterData.profile_image_url,
-                    properties: {
-                        twitter_username: twitterData.username,
-                    },
-                },
-                {
-                    headers: {
-                        'UTU-Trust-Api-Client-Id': '4YcU3qARJbMSg7Ma5i3a0e',
-                    },
-                },
-            );
-            return result;
-        } catch (e) {
-            console.log(e);
-            return e.response?.data || e.message;
-        }
+  async createEntity(id: string, address: string, clientId: string) {
+    const twitterData = await TwitterApi.getUser(id);
+    try {
+      const result = await axios.post(
+        `${process.env.CORE_API_URL}/entity`,
+        {
+          name: twitterData.username,
+          type: 'Address',
+          ids: {
+            uuid: address,
+            address: address,
+            twitter: twitterData.id,
+          },
+          image: twitterData.profile_image_url,
+          properties: {
+            twitter_username: twitterData.username,
+          },
+        },
+        {
+          headers: {
+            'utu-trust-api-client-id': clientId,
+          },
+        },
+      );
+      console.log('saved');
+      return result;
+    } catch (e) {
+      console.log(e);
+      return e.response?.data || e.message;
     }
+  }
 
-    async createRelations(id: string, address: string) {
-        const followers = await TwitterApi.getFollowers(id);
-        // console.log(followers);
-        const following = await TwitterApi.getFollowings(id);
-        console.log(following);
-    }
+  async createRelations(
+    credentials: OathCredentials,
+    id: string,
+    address: string,
+    clientId: string,
+  ) {
+    await this.twitterRelationsQueue.add({
+      credentials,
+      id,
+      address,
+      type: 'FOLLOWERS',
+      clientId,
+    });
+
+    await this.twitterRelationsQueue.add({
+      id,
+      address,
+      type: 'FOLLOWING',
+      clientId,
+    });
+    return true;
+  }
 }

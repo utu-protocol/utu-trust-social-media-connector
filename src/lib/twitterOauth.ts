@@ -1,5 +1,9 @@
 import { OAuth, OAuth2 } from 'oauth';
 
+export type OathCredentials = {
+  token: string;
+  token_secret: string;
+};
 export default class TwitterOauth {
   static getOAuth() {
     return new OAuth(
@@ -84,13 +88,43 @@ export default class TwitterOauth {
     });
   }
 
-  static getUser({ oauth_token, oauth_token_secret }) {
+  static get(
+    { token, token_secret }: OathCredentials,
+    url: string,
+    params: any = {},
+  ) {
+    const oa = this.getOAuth();
+    const validParams = {};
+    Object.keys(params).forEach((key) => {
+      if (params[key]) {
+        validParams[key] = params[key];
+      }
+    });
+
+    const searchParams = Object.keys(validParams).length
+      ? `?${new URLSearchParams(validParams).toString()}`
+      : '';
+
+    return new Promise((resolve, reject) => {
+      oa.get(
+        `${url}${searchParams}`,
+        token, //test user token
+        token_secret, //test user secret
+        (e, data) => {
+          if (e) return reject(e);
+          resolve(JSON.parse(data));
+        },
+      );
+    });
+  }
+
+  static getUser({ token, token_secret }: OathCredentials) {
     const oa = this.getOAuth();
     return new Promise((resolve, reject) => {
       oa.get(
         'https://api.twitter.com/2/account/verify_credentials.json',
-        oauth_token, //test user token
-        oauth_token_secret, //test user secret
+        token, //test user token
+        token_secret, //test user secret
         (e, data) => {
           if (e) return reject(e);
           resolve(data);

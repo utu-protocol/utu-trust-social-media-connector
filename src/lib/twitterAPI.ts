@@ -1,4 +1,5 @@
 import axios from 'axios';
+import TwitterOauth, { OathCredentials } from './twitterOauth';
 
 export default class TwitterApi {
   private static instance() {
@@ -15,23 +16,37 @@ export default class TwitterApi {
     return data.data;
   }
 
-  static async getFollowers(id: string, limit = 200, nextToken?: string) {
-    const { data } = await this.instance().get(`users/${id}/followers`, {
-      params: {
+  static async getFollowers(
+    credentials: OathCredentials,
+    id: string,
+    limit = 200,
+    nextToken?: string,
+  ): Promise<any> {
+    const data = await TwitterOauth.get(
+      credentials,
+      `https://api.twitter.com/2/users/${id}/followers`,
+      {
         max_results: limit,
         next_token: nextToken,
       },
-    });
+    );
     return data;
   }
 
-  static async getFollowings(id: string, limit = 200, nextToken?: string) {
-    const { data } = await this.instance().get(`users/${id}/following`, {
-      params: {
+  static async getFollowings(
+    credentials: OathCredentials,
+    id: string,
+    limit = 200,
+    nextToken?: string,
+  ): Promise<any> {
+    const data = await TwitterOauth.get(
+      credentials,
+      `https://api.twitter.com/2/users/${id}/following`,
+      {
         max_results: limit,
         next_token: nextToken,
       },
-    });
+    );
     return data;
   }
 }

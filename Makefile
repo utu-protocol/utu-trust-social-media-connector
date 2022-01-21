@@ -55,7 +55,11 @@ docker-build:
 	docker build --platform linux/amd64 --build-arg DOCKER_TAG='$(GIT_DESCR)' -t $(DOCKER_IMAGE)  .
 	@echo done
 
-docker-push:
+docker-login:
+	# docker login $(DOCKER_PROVIDER)
+	aws --profile utu.live ecr get-login-password --region eu-central-1 | docker login --username AWS --password-stdin $(DOCKER_REGISTRY)
+
+docker-push: docker-login
 	@echo push image
 	docker login $(DOCKER_PROVIDER)
 	docker tag $(DOCKER_IMAGE):latest $(DOCKER_REGISTRY)/$(DOCKER_IMAGE):$(DOCKER_TAG)
