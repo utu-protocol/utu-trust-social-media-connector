@@ -1,8 +1,8 @@
-import {Injectable} from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 
 import {
-    TelegramConnectionDto,
-    TwitterConnectionDto,
+  TelegramConnectionDto,
+  TwitterConnectionDto,
 } from './dto/connection.dto';
 import axios from 'axios';
 import TwitterOauth, { OathCredentials } from 'src/lib/twitterOauth';
@@ -41,16 +41,37 @@ export class ConnectionsService {
     return data;
   }
 
-    async telegram(connectionDto: TelegramConnectionDto) {
-        const {userSession, user} = await TelegramAPI.verifyCode(connectionDto);
-        const contacts = await TelegramAPI.getContacts(userSession);
+  async telegram(connectionDto: TelegramConnectionDto) {
+    const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
+    const contacts = await TelegramAPI.getContacts(userSession);
 
-        console.log(contacts, "contacts");
+    console.log(contacts, 'contacts');
 
-        return {
-            message: "Linking data successful!"
-        }
+    return {
+      message: 'Linking data successful!',
+    };
+  }
+
+  async createTelegramEntity(contacts, address: string) {
+    try {
+      const result = await axios.post(`${process.env.CORE_API_URL}/entity`, {
+        name: '',
+        type: 'Address',
+        ids: {
+          uuid: address,
+          address: address,
+          telegram: '',
+          image: '',
+          properties: {
+            twitter_username: '',
+          },
+        },
+      });
+    } catch (e) {
+      console.log(e);
+      return e.response?.data || e.message;
     }
+  }
 
   async createEntity(id: string, address: string, clientId: string) {
     const twitterData = await TwitterApi.getUser(id);

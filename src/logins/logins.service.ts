@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import TwitterOauth from 'src/lib/twitterOauth';
-import TelegramAPI from "../lib/telegramAPI";
+import TelegramAPI from '../lib/telegramAPI';
 
 @Injectable()
 export class LoginsService {
@@ -11,5 +11,4 @@ export class LoginsService {
   async telegramToken(tokenDto) {
     return await TelegramAPI.getLoginToken(tokenDto);
   }
-
 }
