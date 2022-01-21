@@ -1,22 +1,31 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
+import { Controller, Post, Body, Req, Res } from '@nestjs/common';
 import { ConnectionsService } from './connections.service';
 import {
   TelegramConnectionDto,
   TwitterConnectionDto,
 } from './dto/connection.dto';
-import { Request } from 'express';
+import { Request, Response } from 'express';
 
 @Controller('connections')
 export class ConnectionsController {
   constructor(private readonly connectionsService: ConnectionsService) {}
 
   @Post('twitter')
-  twitter(
+  async twitter(
     @Body() connectionDto: TwitterConnectionDto,
     @Req() request: Request,
+    @Res() res: Response,
   ) {
     const clientId = String(request.headers['utu-trust-api-client-id']);
-    return this.connectionsService.twitter(connectionDto, clientId);
+    try {
+      const result = await this.connectionsService.twitter(
+        connectionDto,
+        clientId,
+      );
+      res.send(result);
+    } catch (e) {
+      res.status(e.statusCode).send(e);
+    }
   }
 
   @Post('telegram')
