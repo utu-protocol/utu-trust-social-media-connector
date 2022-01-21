@@ -55,13 +55,13 @@ export class TwitterConnectionDto {
 export class TelegramConnectionDto {
   @IsNotEmpty()
   @IsString()
-  phone_number: string
+  phone_number: string;
 
   @IsNotEmpty()
   @IsString()
-  phone_code_hash: string
+  phone_code_hash: string;
 
   @IsNotEmpty()
   @IsString()
-  phone_code: string
+  phone_code: string;
 }

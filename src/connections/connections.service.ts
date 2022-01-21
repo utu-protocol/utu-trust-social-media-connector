@@ -10,8 +10,6 @@ import TwitterApi from 'src/lib/twitterAPI';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import UTTHandler from 'src/lib/UTTHandler';
-import {Api, TelegramClient} from 'telegram';
-import {StringSession} from 'telegram/sessions';
 import TelegramAPI from "../lib/telegramAPI";
 
 @Injectable()
