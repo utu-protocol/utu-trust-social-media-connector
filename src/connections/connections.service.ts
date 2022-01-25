@@ -16,6 +16,7 @@ import TelegramAPI from '../lib/telegramAPI';
 export class ConnectionsService {
   constructor(
     @InjectQueue('twitter-relations') private twitterRelationsQueue: Queue,
+    @InjectQueue('telegram-relations') private telegramRelationsQueue: Queue,
   ) {}
 
   async twitter(connectionDto: TwitterConnectionDto, clientId: string) {
@@ -37,38 +38,6 @@ export class ConnectionsService {
     const tx = await UTTHandler.addConnection(connectionDto.address, twitterId);
     console.log(tx);
     return data;
-  }
-
-  async telegram(connectionDto: TelegramConnectionDto) {
-    const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
-    const contacts = await TelegramAPI.getContacts(userSession);
-
-    console.log(contacts, 'contacts');
-    // await this.createTelegramEntity(user, 'TO-DO');
-    return {
-      message: 'Linking data successful!',
-    };
-  }
-
-  async createTelegramEntity(user: any, address: string) {
-    try {
-      const result = await axios.post(`${process.env.CORE_API_URL}/entity`, {
-        name: user.username,
-        type: 'Address',
-        ids: {
-          uuid: 'ETHEREUM_ADDRESS',
-          address: 'ETHEREUM_ADDRESS',
-          twitter: user.id.value,
-        },
-        image: user.photo,
-        properties: {
-          telegram_username: user.username,
-        },
-      });
-    } catch (e) {
-      console.log(e);
-      return e.response?.data || e.message;
-    }
   }
 
   async createEntity(id: string, address: string, clientId: string) {
@@ -121,6 +90,58 @@ export class ConnectionsService {
       id,
       address,
       type: 'FOLLOWING',
+      clientId,
+    });
+    return true;
+  }
+
+  /*
+   * telegram functions
+   */
+  async telegram(connectionDto: TelegramConnectionDto) {
+    const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
+    const contacts = await TelegramAPI.getContacts(userSession);
+
+    console.log(contacts, 'contacts');
+    await this.createTelegramEntity(user, 'address');
+    // await this.createTelegramRelations();
+    return {
+      message: 'Linking data successful!',
+    };
+  }
+
+  async createTelegramEntity(user: any, address: string) {
+    try {
+      const result = await axios.post(`${process.env.CORE_API_URL}/entity`, {
+        name: user.username,
+        type: 'Address',
+        ids: {
+          uuid: 'ETHEREUM_ADDRESS',
+          address: 'ETHEREUM_ADDRESS',
+          twitter: user.id.value,
+        },
+        image: user.photo,
+        properties: {
+          telegram_username: user.username,
+        },
+      });
+    } catch (e) {
+      console.log(e);
+      return e.response?.data || e.message;
+    }
+  }
+
+  async createTelegramRelations(
+    credentials: OathCredentials,
+    id: string,
+    address: string,
+    clientId: string,
+  ) {
+    await this.telegramRelationsQueue.add({
+      credentials,
+      id,
+      address,
+      type: 'CONTACTS',
       clientId,
     });
     return true;
