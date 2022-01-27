@@ -102,9 +102,9 @@ export class ConnectionsService {
     const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
     const contacts = await TelegramAPI.getContacts(userSession);
 
-    console.log(contacts, 'contacts');
-    await this.createTelegramEntity(user, 'address');
-    // await this.createTelegramRelations();
+    // console.log(contacts);
+    // await this.createTelegramEntity(user, 'address');
+    await this.createTelegramRelations(connectionDto);
     return {
       message: 'Linking data successful!',
     };
@@ -131,18 +131,9 @@ export class ConnectionsService {
     }
   }
 
-  async createTelegramRelations(
-    credentials: OathCredentials,
-    id: string,
-    address: string,
-    clientId: string,
-  ) {
+  async createTelegramRelations(credentials: any) {
     await this.telegramRelationsQueue.add({
       credentials,
-      id,
-      address,
-      type: 'CONTACTS',
-      clientId,
     });
     return true;
   }
