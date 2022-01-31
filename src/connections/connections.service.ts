@@ -102,8 +102,8 @@ export class ConnectionsService {
     const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
     const contacts = await TelegramAPI.getContacts(userSession);
 
-    // console.log(contacts);
-    // await this.createTelegramEntity(user, 'address');
+    console.log(contacts);
+    await this.createTelegramEntity(user, 'address');
     await this.createTelegramRelations(connectionDto);
     return {
       message: 'Linking data successful!',
