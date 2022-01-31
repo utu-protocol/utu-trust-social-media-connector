@@ -19,7 +19,8 @@ export class telegramRelationConsumer {
 
   async processContacts({ address, id, connectionDto }) {
     const { userSession } = await TelegramAPI.verifyCode(connectionDto);
-    const contacts = await TelegramAPI.getContacts(userSession);
+    const contacts: any = await TelegramAPI.getContacts(userSession);
+
     const telegramRelations = contacts.contacts.map((contact) => {
       // return contact;
       return {
@@ -44,7 +45,7 @@ export class telegramRelationConsumer {
         },
       };
     });
-    // console.log(contacts);
+    console.log(contacts);
     await this.sendRequests(telegramRelations, id);
   }
 

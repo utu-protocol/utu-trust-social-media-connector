@@ -116,8 +116,8 @@ export class ConnectionsService {
         name: user.username,
         type: 'Address',
         ids: {
-          uuid: 'ETHEREUM_ADDRESS',
-          address: 'ETHEREUM_ADDRESS',
+          uuid: address,
+          address: address,
           twitter: user.id.value,
         },
         image: user.photo,
