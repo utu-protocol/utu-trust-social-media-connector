@@ -103,7 +103,7 @@ export class ConnectionsService {
     const contacts = await TelegramAPI.getContacts(userSession);
 
     console.log(contacts);
-    await this.createTelegramEntity(user, 'address');
+    await this.createTelegramEntity(user, connectionDto.address);
     await this.createTelegramRelations(user.id, connectionDto.address);
     return {
       message: 'Linking data successful!',
