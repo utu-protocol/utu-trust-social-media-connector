@@ -30,17 +30,17 @@ export class telegramRelationConsumer {
           ids: {
             uuid: address,
             address: address,
-            twitter: id,
+            telegram: id,
           },
         },
         targetCriteria: {
           type: 'Address',
           ids: {
-            twitter: id,
+            twitter: contact.id,
           },
           bidirectional: false,
           properties: {
-            kind: 'twitter',
+            kind: 'telegram',
           },
         },
       };

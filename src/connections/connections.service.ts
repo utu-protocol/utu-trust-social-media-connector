@@ -104,7 +104,7 @@ export class ConnectionsService {
 
     console.log(contacts);
     await this.createTelegramEntity(user, 'address');
-    await this.createTelegramRelations(connectionDto);
+    await this.createTelegramRelations(user.id, connectionDto.address);
     return {
       message: 'Linking data successful!',
     };
@@ -131,9 +131,10 @@ export class ConnectionsService {
     }
   }
 
-  async createTelegramRelations(credentials: any) {
+  async createTelegramRelations(id: string, address: string) {
     await this.telegramRelationsQueue.add({
-      credentials,
+      id,
+      address,
     });
     return true;
   }

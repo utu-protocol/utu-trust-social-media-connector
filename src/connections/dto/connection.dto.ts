@@ -64,4 +64,8 @@ export class TelegramConnectionDto {
   @IsNotEmpty()
   @IsString()
   phone_code: string;
+
+  @IsNotEmpty()
+  @IsString()
+  address: string;
 }
