@@ -5,7 +5,7 @@ import TelegramAPI from '../lib/telegramAPI';
 @Processor('telegram-relations')
 export class telegramRelationConsumer {
   constructor(
-    @InjectQueue('save-relationship')
+    @InjectQueue('save-telegram-relationship')
     private saveTelegramRelationshipQueue: Queue,
   ) {}
 
@@ -17,8 +17,8 @@ export class telegramRelationConsumer {
     return true;
   }
 
-  async processContacts({ address, id, connectionDto }) {
-    const { userSession } = await TelegramAPI.verifyCode(connectionDto);
+  async processContacts({ address, id, userSession }) {
+    console.log('processContacts');
     const contacts: any = await TelegramAPI.getContacts(userSession);
 
     const telegramRelations = contacts.contacts.map((contact) => {
@@ -50,6 +50,7 @@ export class telegramRelationConsumer {
   }
 
   private async sendRequests(relations: any[], clientId: string) {
+    console.log('sendRequests');
     await Promise.all(
       relations.map(async (relation) => {
         await this.saveTelegramRelationshipQueue.add({

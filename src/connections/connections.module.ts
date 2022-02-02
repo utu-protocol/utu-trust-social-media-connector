@@ -18,6 +18,9 @@ import { telegramRelationConsumer } from './telegram-relations.processor';
       {
         name: 'save-relationship',
       },
+      {
+        name: 'save-telegram-relationship',
+      },
     ),
   ],
   controllers: [ConnectionsController],
