@@ -5,8 +5,7 @@ import TelegramAPI from '../lib/telegramAPI';
 @Processor('telegram-relations')
 export class telegramRelationConsumer {
   constructor(
-    @InjectQueue('save-telegram-relationship')
-    private saveTelegramRelationshipQueue: Queue,
+    @InjectQueue('save-relationship') private saveRelationshipQueue: Queue,
   ) {}
 
   @Process({ concurrency: 50 })
@@ -17,9 +16,10 @@ export class telegramRelationConsumer {
     return true;
   }
 
-  async processContacts({ id, address, contacts, telegramClientId }) {
+  async processContacts({ id, address, userSession, clientId }) {
     console.log('processContacts');
     // console.log(contacts);
+    const contacts: any = await TelegramAPI.getContacts(userSession);
 
     const telegramRelations = contacts.map((contact) => {
       console.log(contact.id);
@@ -47,25 +47,18 @@ export class telegramRelationConsumer {
       };
     });
 
-    await this.sendRequests(telegramRelations, telegramClientId);
+    await this.sendRequests(telegramRelations, clientId);
   }
 
-  private async sendRequests(relations: any[], telegramClientId: string) {
-    console.log('sendRequests');
+  private async sendRequests(relations: any[], clientId: string) {
     await Promise.all(
       relations.map(async (relation) => {
-        await this.saveTelegramRelationshipQueue.add({
+        await this.saveRelationshipQueue.add({
           relation,
-          telegramClientId,
+          clientId,
         });
         return relation;
       }),
-    )
-      .then((values) => {
-        console.log('success');
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    );
   }
 }

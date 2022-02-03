@@ -12,23 +12,11 @@ import { telegramRelationConsumer } from './telegram-relations.processor';
       {
         name: 'twitter-relations',
       },
-
       {
         name: 'save-relationship',
       },
       {
         name: 'telegram-relations',
-        redis: {
-          host: 'localhost',
-          port: 6379,
-        },
-      },
-      {
-        name: 'save-telegram-relationship',
-        redis: {
-          host: 'localhost',
-          port: 6379,
-        },
       },
     ),
   ],
