@@ -10,6 +10,7 @@ import TwitterApi from 'src/lib/twitterAPI';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import UTTHandler from 'src/lib/UTTHandler';
+import { TWITTER_CONNECTION_TYPE_ID } from 'src/config';
 
 @Injectable()
 export class ConnectionsService {
@@ -33,7 +34,11 @@ export class ConnectionsService {
       connectionDto.address,
       clientId,
     );
-    await UTTHandler.addConnection(connectionDto.address, twitterId);
+    await UTTHandler.addConnection(
+      connectionDto.address,
+      TWITTER_CONNECTION_TYPE_ID,
+      twitterId,
+    );
     return data;
   }
 
