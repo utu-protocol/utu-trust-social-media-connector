@@ -102,6 +102,8 @@ export class ConnectionsService {
     const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
     const contacts: any = await TelegramAPI.getContacts(userSession);
 
+    // console.log(contacts.users);
+
     await this.createTelegramEntity(
       user,
       connectionDto.address,
@@ -110,7 +112,7 @@ export class ConnectionsService {
     await this.createTelegramRelations(
       user.id,
       connectionDto.address,
-      contacts,
+      contacts.users,
       telegramClientId,
     );
 

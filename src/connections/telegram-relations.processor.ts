@@ -19,8 +19,10 @@ export class telegramRelationConsumer {
 
   async processContacts({ id, address, contacts, telegramClientId }) {
     console.log('processContacts');
+    // console.log(contacts);
 
-    const telegramRelations = contacts.contacts.map((contact) => {
+    const telegramRelations = contacts.map((contact) => {
+      console.log(contact.id);
       // return contact;
       return {
         type: 'social',
@@ -44,7 +46,7 @@ export class telegramRelationConsumer {
         },
       };
     });
-    console.log(contacts);
+
     await this.sendRequests(telegramRelations, telegramClientId);
   }
 
@@ -58,6 +60,12 @@ export class telegramRelationConsumer {
         });
         return relation;
       }),
-    );
+    )
+      .then((values) => {
+        console.log('success');
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
 }
