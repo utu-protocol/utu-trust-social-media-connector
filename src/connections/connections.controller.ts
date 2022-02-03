@@ -25,6 +25,6 @@ export class ConnectionsController {
     @Req() request: Request,
   ) {
     const telegramClientId = String(request.headers['utu-trust-api-client-id']);
-    return this.connectionsService.telegram(connectionDto);
+    return this.connectionsService.telegram(connectionDto, telegramClientId);
   }
 }
