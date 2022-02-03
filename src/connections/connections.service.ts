@@ -88,8 +88,6 @@ export class ConnectionsService {
    */
   async telegram(connectionDto: TelegramConnectionDto, telegramClientId) {
     const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
-    console.log(userSession);
-    // console.log(contacts.users);
 
     await this.createTelegramEntity(
       user,
