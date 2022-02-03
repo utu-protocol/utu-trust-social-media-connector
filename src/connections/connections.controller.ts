@@ -20,7 +20,11 @@ export class ConnectionsController {
   }
 
   @Post('telegram')
-  telegram(@Body() connectionDto: TelegramConnectionDto) {
+  telegram(
+    @Body() connectionDto: TelegramConnectionDto,
+    @Req() request: Request,
+  ) {
+    const telegramClientId = String(request.headers['utu-trust-api-client-id']);
     return this.connectionsService.telegram(connectionDto);
   }
 }

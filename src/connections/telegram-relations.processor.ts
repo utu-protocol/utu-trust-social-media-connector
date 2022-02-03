@@ -17,9 +17,8 @@ export class telegramRelationConsumer {
     return true;
   }
 
-  async processContacts({ address, id, userSession }) {
+  async processContacts({ id, address, contacts, telegramClientId }) {
     console.log('processContacts');
-    const contacts: any = await TelegramAPI.getContacts(userSession);
 
     const telegramRelations = contacts.contacts.map((contact) => {
       // return contact;
@@ -36,7 +35,7 @@ export class telegramRelationConsumer {
         targetCriteria: {
           type: 'Address',
           ids: {
-            twitter: contact.id,
+            telegram: contact.id,
           },
           bidirectional: false,
           properties: {
@@ -46,16 +45,16 @@ export class telegramRelationConsumer {
       };
     });
     console.log(contacts);
-    await this.sendRequests(telegramRelations, id);
+    await this.sendRequests(telegramRelations, telegramClientId);
   }
 
-  private async sendRequests(relations: any[], clientId: string) {
+  private async sendRequests(relations: any[], telegramClientId: string) {
     console.log('sendRequests');
     await Promise.all(
       relations.map(async (relation) => {
         await this.saveTelegramRelationshipQueue.add({
           relation,
-          clientId,
+          telegramClientId,
         });
         return relation;
       }),

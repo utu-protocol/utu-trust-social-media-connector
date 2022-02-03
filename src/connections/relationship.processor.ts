@@ -7,6 +7,11 @@ type RelationshipData = {
   clientId: string;
 };
 
+type TelegramRelationshipData = {
+  relation: any;
+  telegramClientId: string;
+};
+
 @Processor('save-relationship')
 export class RelationshipConsumer {
   @Process({ concurrency: 100 })
@@ -27,12 +32,12 @@ export class RelationshipConsumer {
 @Processor('save-telegram-relationship')
 export class telegramRelationshipConsumer {
   @Process({ concurrency: 100 })
-  async transcode(job: Job<RelationshipData>) {
-    const { relation, clientId } = job.data;
+  async transcode(job: Job<TelegramRelationshipData>) {
+    const { relation, telegramClientId } = job.data;
     console.log('running save job');
     await axios.post(`${process.env.CORE_API_URL}/relationship`, relation, {
       headers: {
-        'utu-trust-api-client-id': clientId,
+        'utu-trust-api-client-id': telegramClientId,
       },
     });
     console.log('saved');

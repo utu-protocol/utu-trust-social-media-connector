@@ -98,15 +98,20 @@ export class ConnectionsService {
   /*
    * telegram
    */
-  async telegram(connectionDto: TelegramConnectionDto) {
+  async telegram(connectionDto: TelegramConnectionDto, telegramClientId) {
     const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
-    // const contacts = await TelegramAPI.getContacts(userSession);
+    const contacts: any = await TelegramAPI.getContacts(userSession);
 
-    await this.createTelegramEntity(user, connectionDto.address);
+    await this.createTelegramEntity(
+      user,
+      connectionDto.address,
+      telegramClientId,
+    );
     await this.createTelegramRelations(
       user.id,
       connectionDto.address,
-      userSession,
+      contacts,
+      telegramClientId,
     );
 
     return {
@@ -114,24 +119,33 @@ export class ConnectionsService {
     };
   }
 
-  async createTelegramEntity(user: any, address: string) {
-    console.log(user);
-    console.log(user.id.value);
-    console.log(address);
+  async createTelegramEntity(
+    user: any,
+    address: string,
+    telegramClientId: string,
+  ) {
     try {
-      const result = await axios.post(`${process.env.CORE_API_URL}/entity`, {
-        name: user.username,
-        type: 'Address',
-        ids: {
-          uuid: address,
-          address: address,
-          telegram: Number(user.id.value),
+      const result = await axios.post(
+        `${process.env.CORE_API_URL}/entity`,
+        {
+          name: user.username,
+          type: 'Address',
+          ids: {
+            uuid: address,
+            address: address,
+            telegram: Number(user.id.value),
+          },
+          image: user.photo,
+          properties: {
+            telegram_username: user.username,
+          },
         },
-        image: user.photo,
-        properties: {
-          telegram_username: user.username,
+        {
+          headers: {
+            'utu-trust-api-client-id': telegramClientId,
+          },
         },
-      });
+      );
       console.log('entity saved');
       return result;
     } catch (e) {
@@ -140,12 +154,18 @@ export class ConnectionsService {
     }
   }
 
-  async createTelegramRelations(id: string, address: string, userSession: any) {
+  async createTelegramRelations(
+    id: string,
+    address: string,
+    contacts: any,
+    telegramClientId: string,
+  ) {
     console.log('createTelegramRelations');
     await this.telegramRelationsQueue.add({
-      userSession,
       id,
       address,
+      contacts,
+      telegramClientId,
     });
     return true;
   }
