@@ -67,7 +67,7 @@ export default class UTTHandler {
   ) {
     this.init();
 
-    const idHash = await this.web3.utils.asciiToHex(socialId);
+    const idHash = await this.web3.utils.sha3(socialId);
     const block = await this.web3.eth.getBlock('latest');
     const gas = block.gasLimit - 100000;
 
