@@ -14,7 +14,7 @@ OS = linux
 ARCH = amd64
 # K8S
 K8S_NAMESPACE = utu-trust-api-stage
-K8S_DEPLOYMENT =trust-api-social-media-connector
+K8S_DEPLOYMENT = trust-api-gateway-social-media-connector
 
 .PHONY: list
 list:
