@@ -11,6 +11,7 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import UTTHandler from 'src/lib/UTTHandler';
 import TelegramAPI from '../lib/telegramAPI';
+import { TWITTER_CONNECTION_TYPE_ID,TELEGRAM_CONNECTION_TYPE_ID } from 'src/config';
 
 @Injectable()
 export class ConnectionsService {
@@ -35,8 +36,11 @@ export class ConnectionsService {
       connectionDto.address,
       clientId,
     );
-    const tx = await UTTHandler.addConnection(connectionDto.address, twitterId);
-    console.log(tx);
+    await UTTHandler.addConnection(
+      connectionDto.address,
+      TWITTER_CONNECTION_TYPE_ID,
+      twitterId,
+    );
     return data;
   }
 
@@ -101,7 +105,7 @@ export class ConnectionsService {
       telegramClientId,
     );
 
-    const tx = await UTTHandler.addConnection(connectionDto.address,  user.id);
+    const tx = await UTTHandler.addConnection(connectionDto.address, TELEGRAM_CONNECTION_TYPE_ID, user.id);
     console.log(tx);
 
     return {

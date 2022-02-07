@@ -2,7 +2,6 @@
 import Web3 from 'web3';
 const Web3HttpProvider = require('web3-providers-http');
 import UTTAbi from '../contracts/UTT.abi.json';
-
 export default class UTTHandler {
   static options = {
     timeout: 30000, // ms
@@ -61,20 +60,28 @@ export default class UTTHandler {
     return tx;
   }
 
-  static async addConnection(address: string, socialId: number) {
+  static async addConnection(
+    address: string,
+    connectionId: number,
+    socialId: number,
+  ) {
     this.init();
 
+    const idHash = await this.web3.utils.sha3(socialId);
     const block = await this.web3.eth.getBlock('latest');
     const gas = block.gasLimit - 100000;
+
     const contract = new this.web3.eth.Contract(
       UTTAbi as any,
       process.env.UTT_CONTRACT_ADDRESS,
     );
 
-    const tx = await contract.methods.addConnection(address, socialId).send({
-      from: this.account.address,
-      gas,
-    });
+    const tx = await contract.methods
+      .addConnection(address, connectionId, idHash)
+      .send({
+        from: this.account.address,
+        gas,
+      });
     return tx;
   }
 }

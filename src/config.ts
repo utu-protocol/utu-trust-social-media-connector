@@ -1,0 +1,2 @@
+export const TWITTER_CONNECTION_TYPE_ID = 1;
+export const TELEGRAM_CONNECTION_TYPE_ID = 2;
