@@ -101,6 +101,9 @@ export class ConnectionsService {
       telegramClientId,
     );
 
+    const tx = await UTTHandler.addConnection(connectionDto.address,  user.id);
+    console.log(tx);
+
     return {
       message: 'Linking data successful!',
     };
