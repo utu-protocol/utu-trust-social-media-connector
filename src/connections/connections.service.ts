@@ -10,12 +10,14 @@ import TwitterApi from 'src/lib/twitterAPI';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import UTTHandler from 'src/lib/UTTHandler';
-import { TWITTER_CONNECTION_TYPE_ID } from 'src/config';
+import TelegramAPI from '../lib/telegramAPI';
+import { TWITTER_CONNECTION_TYPE_ID,TELEGRAM_CONNECTION_TYPE_ID } from 'src/config';
 
 @Injectable()
 export class ConnectionsService {
   constructor(
     @InjectQueue('twitter-relations') private twitterRelationsQueue: Queue,
+    @InjectQueue('telegram-relations') private telegramRelationsQueue: Queue,
   ) {}
 
   async twitter(connectionDto: TwitterConnectionDto, clientId: string) {
@@ -42,39 +44,24 @@ export class ConnectionsService {
     return data;
   }
 
-  async telegram(connectionDto: TelegramConnectionDto, clientId: string) {
-    return true;
-  }
-
   async createEntity(id: string, address: string, clientId: string) {
     const twitterData = await TwitterApi.getUser(id);
-    try {
-      const result = await axios.post(
-        `${process.env.CORE_API_URL}/entity`,
-        {
-          name: twitterData.username,
-          type: 'Address',
-          ids: {
-            uuid: address,
-            address: address,
-            twitter: twitterData.id,
-          },
-          image: twitterData.profile_image_url,
-          properties: {
-            twitter_username: twitterData.username,
-          },
+    return this.saveEntity(
+      {
+        name: twitterData.username,
+        type: 'Address',
+        ids: {
+          uuid: address,
+          address: address,
+          twitter: twitterData.id,
         },
-        {
-          headers: {
-            'utu-trust-api-client-id': clientId,
-          },
+        image: twitterData.profile_image_url,
+        properties: {
+          twitter_username: twitterData.username,
         },
-      );
-      return result;
-    } catch (e) {
-      console.log(e);
-      return e.response?.data || e.message;
-    }
+      },
+      clientId,
+    );
   }
 
   async createRelations(
@@ -98,5 +85,85 @@ export class ConnectionsService {
       clientId,
     });
     return true;
+  }
+
+  /*
+   * telegram
+   */
+  async telegram(connectionDto: TelegramConnectionDto, telegramClientId) {
+    const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
+
+    await this.createTelegramEntity(
+      user,
+      connectionDto.address,
+      telegramClientId,
+    );
+    await this.createTelegramRelations(
+      user.id,
+      connectionDto.address,
+      userSession,
+      telegramClientId,
+    );
+
+    const tx = await UTTHandler.addConnection(connectionDto.address, TELEGRAM_CONNECTION_TYPE_ID, user.id);
+    console.log(tx);
+
+    return {
+      message: 'Linking data successful!',
+    };
+  }
+
+  async createTelegramEntity(user: any, address: string, clientId: string) {
+    return this.saveEntity(
+      {
+        name: user.username,
+        type: 'Address',
+        ids: {
+          uuid: address,
+          address: address,
+          telegram: Number(user.id.value),
+        },
+        image: user.photo,
+        properties: {
+          telegram_username: user.username,
+        },
+      },
+      clientId,
+    );
+  }
+
+  async createTelegramRelations(
+    id: string,
+    address: string,
+    userSession: any,
+    clientId: string,
+  ) {
+    console.log('createTelegramRelations');
+    await this.telegramRelationsQueue.add({
+      id,
+      address,
+      userSession,
+      clientId,
+    });
+    return true;
+  }
+
+  async saveEntity(data: any, clientId: string) {
+    try {
+      const result = await axios.post(
+        `${process.env.CORE_API_URL}/entity`,
+        data,
+        {
+          headers: {
+            'utu-trust-api-client-id': clientId,
+          },
+        },
+      );
+      console.log('saved');
+      return result;
+    } catch (e) {
+      console.log(e);
+      return e.response?.data || e.message;
+    }
   }
 }

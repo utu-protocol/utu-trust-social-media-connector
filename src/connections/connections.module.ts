@@ -4,6 +4,7 @@ import { ConnectionsController } from './connections.controller';
 import { BullModule } from '@nestjs/bull';
 import { RelationshipConsumer } from './relationship.processor';
 import { TwitterRelationConsumer } from './twitter-relations.processor';
+import { telegramRelationConsumer } from './telegram-relations.processor';
 
 @Module({
   imports: [
@@ -14,12 +15,16 @@ import { TwitterRelationConsumer } from './twitter-relations.processor';
       {
         name: 'save-relationship',
       },
+      {
+        name: 'telegram-relations',
+      },
     ),
   ],
   controllers: [ConnectionsController],
   providers: [
     ConnectionsService,
     TwitterRelationConsumer,
+    telegramRelationConsumer,
     RelationshipConsumer,
   ],
 })

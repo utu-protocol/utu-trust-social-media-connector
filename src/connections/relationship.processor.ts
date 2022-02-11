@@ -6,7 +6,6 @@ type RelationshipData = {
   relation: any;
   clientId: string;
 };
-
 @Processor('save-relationship')
 export class RelationshipConsumer {
   @Process({ concurrency: 100 })

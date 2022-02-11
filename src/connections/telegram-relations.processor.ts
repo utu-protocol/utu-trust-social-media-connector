@@ -1,0 +1,65 @@
+import { Processor, Process, InjectQueue } from '@nestjs/bull';
+import { Job, Queue } from 'bull';
+import TelegramAPI from '../lib/telegramAPI';
+
+@Processor('telegram-relations')
+export class telegramRelationConsumer {
+  constructor(
+    @InjectQueue('save-relationship') private saveRelationshipQueue: Queue,
+  ) {}
+
+  @Process({ concurrency: 50 })
+  async transcode(job: Job<any>) {
+    console.log('processing jobs');
+    await this.processContacts(job.data);
+    await job.progress(100);
+    return true;
+  }
+
+  async processContacts({ id, address, userSession, clientId }) {
+    console.log('processContacts');
+    console.log(userSession);
+    const contacts: any = await TelegramAPI.getContacts(userSession);
+    console.log(contacts.users);
+
+    const telegramRelations = contacts.users.map((contact) => {
+      console.log(contact.id);
+      // return contact;
+      return {
+        type: 'social',
+        sourceCriteria: {
+          type: 'Address',
+          ids: {
+            uuid: address,
+            address: address,
+            telegram: id,
+          },
+        },
+        targetCriteria: {
+          type: 'Address',
+          ids: {
+            telegram: contact.id,
+          },
+          bidirectional: false,
+          properties: {
+            kind: 'telegram',
+          },
+        },
+      };
+    });
+
+    await this.sendRequests(telegramRelations, clientId);
+  }
+
+  private async sendRequests(relations: any[], clientId: string) {
+    await Promise.all(
+      relations.map(async (relation) => {
+        await this.saveRelationshipQueue.add({
+          relation,
+          clientId,
+        });
+        return relation;
+      }),
+    );
+  }
+}

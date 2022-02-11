@@ -33,7 +33,7 @@ export class ConnectionsController {
     @Body() connectionDto: TelegramConnectionDto,
     @Req() request: Request,
   ) {
-    const clientId = String(request.headers['utu-trust-api-client-id']);
-    return this.connectionsService.twitter(connectionDto, clientId);
+    const telegramClientId = String(request.headers['utu-trust-api-client-id']);
+    return this.connectionsService.telegram(connectionDto, telegramClientId);
   }
 }
