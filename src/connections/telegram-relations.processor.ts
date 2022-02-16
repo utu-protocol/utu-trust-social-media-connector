@@ -18,12 +18,9 @@ export class telegramRelationConsumer {
 
   async processContacts({ id, address, userSession, clientId }) {
     console.log('processContacts');
-    console.log(userSession);
     const contacts: any = await TelegramAPI.getContacts(userSession);
-    console.log(contacts.users);
 
     const telegramRelations = contacts.users.map((contact) => {
-      console.log(contact.id);
       // return contact;
       return {
         type: 'social',

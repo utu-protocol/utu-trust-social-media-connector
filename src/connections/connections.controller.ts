@@ -1,4 +1,12 @@
-import { Controller, Post, Body, Req, Res } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Req,
+  Res,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ConnectionsService } from './connections.service';
 import {
   TelegramConnectionDto,
@@ -24,16 +32,26 @@ export class ConnectionsController {
       );
       res.send(result);
     } catch (e) {
-      res.status(e.statusCode).send(e);
+      throw new HttpException(e.message, HttpStatus.PRECONDITION_FAILED);
     }
   }
 
   @Post('telegram')
-  telegram(
+  async telegram(
     @Body() connectionDto: TelegramConnectionDto,
     @Req() request: Request,
   ) {
-    const telegramClientId = String(request.headers['utu-trust-api-client-id']);
-    return this.connectionsService.telegram(connectionDto, telegramClientId);
+    try {
+      const telegramClientId = String(
+        request.headers['utu-trust-api-client-id'],
+      );
+      const result = await this.connectionsService.telegram(
+        connectionDto,
+        telegramClientId,
+      );
+      return result;
+    } catch (e) {
+      throw new HttpException(e.message, HttpStatus.PRECONDITION_FAILED);
+    }
   }
 }

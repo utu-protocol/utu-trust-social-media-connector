@@ -11,7 +11,10 @@ import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
 import UTTHandler from 'src/lib/UTTHandler';
 import TelegramAPI from '../lib/telegramAPI';
-import { TWITTER_CONNECTION_TYPE_ID,TELEGRAM_CONNECTION_TYPE_ID } from 'src/config';
+import {
+  TWITTER_CONNECTION_TYPE_ID,
+  TELEGRAM_CONNECTION_TYPE_ID,
+} from 'src/config';
 
 @Injectable()
 export class ConnectionsService {
@@ -21,8 +24,6 @@ export class ConnectionsService {
   ) {}
 
   async twitter(connectionDto: TwitterConnectionDto, clientId: string) {
-    // const tx = await Endorsement.send(connectionDto.address, 10);
-    // return tx;
     const data = (await TwitterOauth.getAccessToken(connectionDto)) as any;
     const twitterId = data.results.user_id;
     const credentials = {
@@ -105,8 +106,11 @@ export class ConnectionsService {
       telegramClientId,
     );
 
-    const tx = await UTTHandler.addConnection(connectionDto.address, TELEGRAM_CONNECTION_TYPE_ID, user.id);
-    console.log(tx);
+    await UTTHandler.addConnection(
+      connectionDto.address,
+      TELEGRAM_CONNECTION_TYPE_ID,
+      user.id,
+    );
 
     return {
       message: 'Linking data successful!',
@@ -162,7 +166,6 @@ export class ConnectionsService {
       console.log('saved');
       return result;
     } catch (e) {
-      console.log(e);
       return e.response?.data || e.message;
     }
   }

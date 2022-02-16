@@ -49,12 +49,6 @@ export default class TwitterOauth {
 
   static getAccessToken({ oauth_token, oauth_verifier, oauth_token_secret }) {
     const oa = this.getOAuth();
-    console.log(
-      'getting access token',
-      oauth_token,
-      oauth_verifier,
-      oauth_token_secret,
-    );
     return new Promise((resolve, reject) => {
       oa.getOAuthAccessToken(
         oauth_token,
