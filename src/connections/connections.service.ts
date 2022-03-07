@@ -166,7 +166,7 @@ export class ConnectionsService {
       console.log('saved');
       return result;
     } catch (e) {
-      return e.response?.data || e.message;
+      throw e;
     }
   }
 }
