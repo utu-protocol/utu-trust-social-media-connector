@@ -1,4 +1,10 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  HttpException,
+  HttpStatus,
+  Post,
+} from '@nestjs/common';
 import { TwitterLoginDto } from './dto/twitter-login.dto';
 import { LoginsService } from './logins.service';
 import { TelegramTokenDto } from './dto/telegram-login.dto';
@@ -8,12 +14,32 @@ export class LoginsController {
   constructor(private readonly loginsService: LoginsService) {}
 
   @Post('twitter/oauth/request_token')
-  create(@Body() twitterLoginDto: TwitterLoginDto) {
-    return this.loginsService.twitterRequestToken(twitterLoginDto);
+  async create(@Body() twitterLoginDto: TwitterLoginDto) {
+    try {
+      const result = await this.loginsService.twitterRequestToken(
+        twitterLoginDto,
+      );
+      return result;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        e.message,
+        e.statusCode || e.code || HttpStatus.PRECONDITION_FAILED,
+      );
+    }
   }
 
   @Post('telegram/token')
-  telegram(@Body() tokenDto: TelegramTokenDto) {
-    return this.loginsService.telegramToken(tokenDto);
+  async telegram(@Body() tokenDto: TelegramTokenDto) {
+    try {
+      const result = await this.loginsService.telegramToken(tokenDto);
+      return result;
+    } catch (e) {
+      console.log(e);
+      throw new HttpException(
+        e.message,
+        e.statusCode || e.code || HttpStatus.PRECONDITION_FAILED,
+      );
+    }
   }
 }

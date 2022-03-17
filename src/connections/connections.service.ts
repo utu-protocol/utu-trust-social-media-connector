@@ -9,12 +9,12 @@ import TwitterOauth, { OathCredentials } from 'src/lib/twitterOauth';
 import TwitterApi from 'src/lib/twitterAPI';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import UTTHandler from 'src/lib/UTTHandler';
 import TelegramAPI from '../lib/telegramAPI';
 import {
   TWITTER_CONNECTION_TYPE_ID,
   TELEGRAM_CONNECTION_TYPE_ID,
 } from 'src/config';
+import { addConnection } from 'src/lib/ethereum';
 
 @Injectable()
 export class ConnectionsService {
@@ -37,7 +37,7 @@ export class ConnectionsService {
       connectionDto.address,
       clientId,
     );
-    await UTTHandler.addConnection(
+    await addConnection(
       connectionDto.address,
       TWITTER_CONNECTION_TYPE_ID,
       twitterId,
@@ -47,6 +47,7 @@ export class ConnectionsService {
 
   async createEntity(id: string, address: string, clientId: string) {
     const twitterData = await TwitterApi.getUser(id);
+    console.log('creating entity');
     return this.saveEntity(
       {
         name: twitterData.username,
@@ -71,6 +72,7 @@ export class ConnectionsService {
     address: string,
     clientId: string,
   ) {
+    console.log('creating relations');
     await this.twitterRelationsQueue.add({
       credentials,
       id,
@@ -106,7 +108,7 @@ export class ConnectionsService {
       telegramClientId,
     );
 
-    await UTTHandler.addConnection(
+    await addConnection(
       connectionDto.address,
       TELEGRAM_CONNECTION_TYPE_ID,
       user.id,

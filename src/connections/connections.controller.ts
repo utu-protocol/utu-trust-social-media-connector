@@ -25,6 +25,7 @@ export class ConnectionsController {
     @Res() res: Response,
   ) {
     const clientId = String(request.headers['utu-trust-api-client-id']);
+    console.log('connecting to twitter');
     try {
       const result = await this.connectionsService.twitter(
         connectionDto,
@@ -32,6 +33,7 @@ export class ConnectionsController {
       );
       res.send(result);
     } catch (e) {
+      console.log(e);
       throw new HttpException(e.message, HttpStatus.PRECONDITION_FAILED);
     }
   }
