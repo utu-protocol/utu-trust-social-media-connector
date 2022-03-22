@@ -129,7 +129,7 @@ export class ConnectionsService {
           address: address,
           telegram: Number(user.id.value),
         },
-        image: user.photo,
+        // image: user.photo,
         properties: {
           telegram_username: user.username,
         },

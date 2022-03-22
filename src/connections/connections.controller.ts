@@ -53,6 +53,7 @@ export class ConnectionsController {
       );
       return result;
     } catch (e) {
+      console.log(e);
       throw new HttpException(e.message, HttpStatus.PRECONDITION_FAILED);
     }
   }
