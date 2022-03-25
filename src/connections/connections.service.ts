@@ -50,7 +50,10 @@ export class ConnectionsService {
         },
         image: twitterData.profile_image_url,
         properties: {
-          twitter_username: twitterData.username,
+          twitter: {
+            username: twitterData.username,
+            profile_image_url: twitterData.profile_image_url,
+          },
         },
       },
       clientId,
@@ -113,7 +116,9 @@ export class ConnectionsService {
         },
         // image: user.photo,
         properties: {
-          telegram_username: user.username,
+          telegram: {
+            username: user.username,
+          },
         },
       },
       clientId,
