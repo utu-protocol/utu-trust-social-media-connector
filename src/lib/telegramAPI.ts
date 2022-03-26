@@ -2,7 +2,6 @@ import { StringSession } from 'telegram/sessions';
 import { Api, TelegramClient } from 'telegram';
 import dotenv from 'dotenv';
 dotenv.config();
-
 export default class TelegramAPI {
   private static api_id = process.env.TELEGRAM_API_ID;
   private static api_hash = process.env.TELEGRAM_API_HASH;
@@ -61,14 +60,14 @@ export default class TelegramAPI {
       );
 
       await client.connect();
-      const { user }: any = await client.invoke(
+      const auth = (await client.invoke(
         new Api.auth.SignIn({
           phoneNumber: phone_number,
           phoneCodeHash: phone_code_hash,
           phoneCode: phone_code,
         }),
-      );
-
+      )) as Api.auth.Authorization;
+      const user = auth.user as Api.User;
       const userSession = client.session.save();
       return {
         userSession,

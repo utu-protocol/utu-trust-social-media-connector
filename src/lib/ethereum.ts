@@ -1,5 +1,6 @@
 import { ethers, utils, Wallet } from 'ethers';
 import { NODE_URL, UTT_CONTRACT_ADDRESS, UTT_PRIVATE_KEY } from 'src/config';
+import { BigInteger } from 'big-integer';
 
 import CONTRACT_ABI from '../contracts/UTT.abi.json';
 
@@ -20,7 +21,7 @@ async function getContract() {
 export async function addConnection(
   address: string,
   connectionId: number,
-  socialId: number,
+  socialId: number | BigInteger,
 ) {
   initProvider();
   console.log('add connection to the smart contract');

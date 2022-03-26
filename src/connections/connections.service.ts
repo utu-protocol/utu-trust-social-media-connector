@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-
+import { Api } from 'telegram';
+import { BigInteger } from 'big-integer';
 import {
   TelegramConnectionDto,
   TwitterConnectionDto,
@@ -51,8 +52,8 @@ export class ConnectionsService {
         image: twitterData.profile_image_url,
         properties: {
           twitter: {
-            username: twitterData.username,
-            profile_image_url: twitterData.profile_image_url,
+            name: twitterData.username,
+            image: twitterData.profile_image_url,
           },
         },
       },
@@ -104,7 +105,11 @@ export class ConnectionsService {
     };
   }
 
-  async createTelegramEntity(user: any, address: string, clientId: string) {
+  async createTelegramEntity(
+    user: Api.User,
+    address: string,
+    clientId: string,
+  ) {
     return this.saveEntity(
       {
         name: user.username,
@@ -112,13 +117,13 @@ export class ConnectionsService {
         ids: {
           uuid: address,
           address: address,
-          telegram: Number(user.id.value),
+          telegram: Number(user.id),
         },
         // image: user.photo,
         properties: {
-          telegram: {
-            username: user.username,
-          },
+          name:
+            user.username || `${user.firstName || ''}  ${user.lastName || ''}`,
+          // image: if available, include TG profile image
         },
       },
       clientId,
@@ -126,7 +131,7 @@ export class ConnectionsService {
   }
 
   async createTelegramRelations(
-    id: string,
+    id: string | BigInteger,
     address: string,
     userSession: any,
     clientId: string,
