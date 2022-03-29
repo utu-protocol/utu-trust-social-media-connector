@@ -11,9 +11,15 @@ export class telegramRelationConsumer {
   @Process({ concurrency: 50 })
   async transcode(job: Job<any>) {
     console.log('processing jobs');
-    await this.processContacts(job.data);
-    await job.progress(100);
-    return true;
+    try {
+      await this.processContacts(job.data);
+      await job.progress(100);
+      return true;
+    } catch (e) {
+      console.log(e);
+      await job.moveToFailed(e);
+      return false;
+    }
   }
 
   async processContacts({ id, address, userSession, clientId }) {
