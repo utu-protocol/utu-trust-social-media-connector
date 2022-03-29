@@ -52,6 +52,7 @@ export const verifyCode = async ({
   phone_code,
 }) => {
   const client = await initClient();
+  console.log('authenticating', phone_number);
   const auth = (await client.invoke(
     new Api.auth.SignIn({
       phoneNumber: phone_number,
