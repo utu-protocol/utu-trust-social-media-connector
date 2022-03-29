@@ -19,8 +19,9 @@ export class TwitterRelationConsumer {
 
   @Process({ concurrency: 50 })
   async transcode(job: Job<TwitterRelationData>) {
-    const { type } = job.data;
+    const { type, credentials } = job.data;
     try {
+      if (!credentials) return job.remove();
       if (type === 'FOLLOWERS') {
         await this.processFollowers(job.data);
         await job.progress(100);
