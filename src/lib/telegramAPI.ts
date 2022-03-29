@@ -1,100 +1,74 @@
 import { StringSession } from 'telegram/sessions';
 import { Api, TelegramClient } from 'telegram';
-import dotenv from 'dotenv';
-dotenv.config();
-export default class TelegramAPI {
-  private static api_id = process.env.TELEGRAM_API_ID;
-  private static api_hash = process.env.TELEGRAM_API_HASH;
+import { TELEGRAM_API_HASH, TELEGRAM_API_ID } from 'src/config';
 
-  private static instance = new StringSession('');
+let storedSession = null;
 
-  static async getLoginToken({ phone_number }) {
-    try {
-      const client = new TelegramClient(
-        this.instance,
-        Number(this.api_id),
-        this.api_hash,
-        {
-          useWSS: true,
-          connectionRetries: 5,
-        },
-      );
+async function initClient(session?, save = false): Promise<TelegramClient> {
+  const client = new TelegramClient(
+    session || new StringSession(''),
+    TELEGRAM_API_ID,
+    TELEGRAM_API_HASH,
+    {
+      useWSS: true,
+      connectionRetries: 100000000000000000000000000,
+      requestRetries: 5,
+      floodSleepThreshold: 20,
+      // autoReconnect: true,
+    },
+  );
 
-      await client.connect();
-
-      const { phoneCodeHash }: any = await client.invoke(
-        new Api.auth.SendCode({
-          phoneNumber: phone_number,
-          apiId: Number(this.api_id),
-          apiHash: this.api_hash,
-          settings: new Api.CodeSettings({
-            allowFlashcall: true,
-            currentNumber: true,
-            allowAppHash: true,
-          }),
-        }),
-      );
-
-      client.session.save();
-
-      return {
-        message: 'Code sent successfully, check your telegram app.',
-        phoneCodeHash,
-      };
-    } catch (err) {
-      console.log('no 4', err);
-      throw new Error(err);
-    }
+  await client.connect();
+  if (!storedSession && save) {
+    storedSession = client.session.save();
   }
-
-  static async verifyCode({ phone_number, phone_code_hash, phone_code }) {
-    try {
-      const client = new TelegramClient(
-        this.instance,
-        Number(this.api_id),
-        this.api_hash,
-        {
-          useWSS: true,
-          connectionRetries: 5,
-        },
-      );
-
-      await client.connect();
-      const auth = (await client.invoke(
-        new Api.auth.SignIn({
-          phoneNumber: phone_number,
-          phoneCodeHash: phone_code_hash,
-          phoneCode: phone_code,
-        }),
-      )) as Api.auth.Authorization;
-      const user = auth.user as Api.User;
-      const userSession = client.session.save();
-      return {
-        userSession,
-        user,
-        message: 'logged in successfully',
-      };
-    } catch (e) {
-      throw new Error(e);
-    }
-  }
-
-  static async getContacts(session: any) {
-    try {
-      const userSession = new StringSession(session);
-      const client = new TelegramClient(
-        userSession,
-        Number(this.api_id),
-        this.api_hash,
-        {
-          useWSS: true,
-          connectionRetries: 5,
-        },
-      );
-      await client.connect();
-      return await client.invoke(new Api.contacts.GetContacts({}));
-    } catch (e) {
-      throw new Error(e);
-    }
-  }
+  return client;
 }
+
+export const getLoginToken = async ({ phone_number }) => {
+  const client = await initClient(null, true);
+  const { phoneCodeHash }: any = await client.invoke(
+    new Api.auth.SendCode({
+      phoneNumber: phone_number,
+      apiId: TELEGRAM_API_ID,
+      apiHash: TELEGRAM_API_HASH,
+      settings: new Api.CodeSettings({
+        allowFlashcall: true,
+        currentNumber: true,
+        allowAppHash: true,
+      }),
+    }),
+  );
+
+  return {
+    message: 'Code sent successfully, check your telegram app.',
+    phoneCodeHash,
+  };
+};
+
+export const verifyCode = async ({
+  phone_number,
+  phone_code_hash,
+  phone_code,
+}) => {
+  const client = await initClient();
+  const auth = (await client.invoke(
+    new Api.auth.SignIn({
+      phoneNumber: phone_number,
+      phoneCodeHash: phone_code_hash,
+      phoneCode: phone_code,
+    }),
+  )) as Api.auth.Authorization;
+  const user = auth.user as Api.User;
+  const userSession = client.session.save();
+  return {
+    userSession,
+    user,
+    message: 'logged in successfully',
+  };
+};
+export const getContacts = async (session: any) => {
+  const userSession = new StringSession(session);
+  const client = await initClient(userSession);
+  return await client.invoke(new Api.contacts.GetContacts({}));
+};

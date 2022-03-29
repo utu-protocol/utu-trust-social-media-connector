@@ -10,7 +10,7 @@ import TwitterOauth, { OathCredentials } from 'src/lib/twitterOauth';
 import TwitterApi from 'src/lib/twitterAPI';
 import { InjectQueue } from '@nestjs/bull';
 import { Queue } from 'bull';
-import TelegramAPI from '../lib/telegramAPI';
+import { verifyCode } from '../lib/telegramAPI';
 import {
   TWITTER_CONNECTION_TYPE_ID,
   TELEGRAM_CONNECTION_TYPE_ID,
@@ -88,7 +88,7 @@ export class ConnectionsService {
    * telegram
    */
   async telegram(connectionDto: TelegramConnectionDto, telegramClientId) {
-    const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
+    const { userSession, user } = await verifyCode(connectionDto);
     const address = String(connectionDto.address).toLowerCase();
     await this.createTelegramEntity(user, address, telegramClientId);
     await this.createTelegramRelations(

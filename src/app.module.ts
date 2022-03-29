@@ -7,7 +7,7 @@ import { LoginsModule } from './logins/logins.module';
 import { BullModule } from '@nestjs/bull';
 @Module({
   imports: [
-    ConfigModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true }),
     BullModule.forRoot({
       redis: {
         host: process.env.REDIS_HOST,

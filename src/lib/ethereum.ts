@@ -33,7 +33,7 @@ export async function addConnection(
     connectionId,
     idHash,
   );
-  const gasPrice = await feeData.maxFeePerGas.mul(100);
+  const gasPrice = await feeData.maxFeePerGas.mul(1);
   console.log('gasPrice', gasPrice);
   const tx = await contract.addConnection(address, connectionId, idHash, {
     gasPrice,
