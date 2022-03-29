@@ -5,6 +5,8 @@ import { ConnectionsModule } from './connections/connections.module';
 import { ConfigModule } from '@nestjs/config';
 import { LoginsModule } from './logins/logins.module';
 import { BullModule } from '@nestjs/bull';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { APP_GUARD } from '@nestjs/core';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }),
@@ -16,8 +18,18 @@ import { BullModule } from '@nestjs/bull';
     }),
     ConnectionsModule,
     LoginsModule,
+    ThrottlerModule.forRoot({
+      ttl: 600,
+      limit: 18,
+    }),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}
