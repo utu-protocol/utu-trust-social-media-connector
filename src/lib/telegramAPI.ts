@@ -1,10 +1,17 @@
 import { StringSession } from 'telegram/sessions';
 import { Api, TelegramClient } from 'telegram';
 import { TELEGRAM_API_HASH, TELEGRAM_API_ID } from 'src/config';
+import redisClient from './redis-client';
 
-let storedSession = null;
+async function getSession(key) {
+  const session = await redisClient.get(key);
+  if (session) {
+    return new StringSession(session);
+  }
+  return null;
+}
 
-async function initClient(session?, save = false): Promise<TelegramClient> {
+async function initClient(session?, sessionId = null): Promise<TelegramClient> {
   const client = new TelegramClient(
     session || new StringSession(''),
     TELEGRAM_API_ID,
@@ -19,14 +26,15 @@ async function initClient(session?, save = false): Promise<TelegramClient> {
   );
 
   await client.connect();
-  if (!storedSession && save) {
-    storedSession = client.session.save();
+  if (sessionId) {
+    const store = await client.session.save();
+    redisClient.set(sessionId, String(store));
   }
   return client;
 }
 
 export const getLoginToken = async ({ phone_number }) => {
-  const client = await initClient(null, true);
+  const client = await initClient(null, phone_number);
   const { phoneCodeHash }: any = await client.invoke(
     new Api.auth.SendCode({
       phoneNumber: phone_number,
@@ -51,8 +59,8 @@ export const verifyCode = async ({
   phone_code_hash,
   phone_code,
 }) => {
-  const client = await initClient();
-  console.log('authenticating', phone_number);
+  const session = await getSession(phone_number);
+  const client = await initClient(session);
   const auth = (await client.invoke(
     new Api.auth.SignIn({
       phoneNumber: phone_number,
