@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { TWITTER_BEARER_TOKEN } from 'src/config';
 import TwitterOauth, { OathCredentials } from './twitterOauth';
 
 export default class TwitterApi {
   private static instance() {
     return axios.create({
       baseURL: 'https://api.twitter.com/2/',
-      headers: { Authorization: `Bearer ${process.env.BEARER_TOKEN}` },
+      headers: { Authorization: `Bearer ${TWITTER_BEARER_TOKEN}` },
     });
   }
 
