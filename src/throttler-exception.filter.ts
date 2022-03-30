@@ -10,7 +10,7 @@ export class ThrottlerExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     response.status(status).json({
       statusCode: status,
-      message: 'Too Many Requests, try again after 1 minutes',
+      message: 'Too Many Requests, try again after 1 minute',
     });
   }
 }
