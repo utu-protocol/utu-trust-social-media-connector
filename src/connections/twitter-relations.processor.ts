@@ -53,12 +53,12 @@ export class TwitterRelationConsumer {
             uuid: address,
             address: address,
             twitter: id,
-          },
-          bidirectional: false,
-          properties: {
-            kind: 'twitter',
-          },
+          }
         },
+        bidirectional: false,
+        properties: {
+          kind: 'twitter',
+        }
       };
     });
     await this.sendRequests(relations, clientId);
@@ -87,12 +87,12 @@ export class TwitterRelationConsumer {
           type: 'Address',
           ids: {
             twitter: follower.id,
-          },
-          bidirectional: false,
-          properties: {
-            kind: 'twitter',
-          },
+          }
         },
+        bidirectional: false,
+        properties: {
+          kind: 'twitter',
+        }
       };
     });
     await this.sendRequests(relations, clientId);
