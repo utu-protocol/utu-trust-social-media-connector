@@ -30,24 +30,15 @@ export class ConnectionsService {
       token: data.oauth_access_token,
       token_secret: data.oauth_access_token_secret,
     };
-    await this.createEntity(twitterId, connectionDto.address, clientId);
-    await this.createRelations(
-      credentials,
-      twitterId,
-      connectionDto.address,
-      clientId,
-    );
-    await addConnection(
-      connectionDto.address,
-      TWITTER_CONNECTION_TYPE_ID,
-      twitterId,
-    );
+    const address = String(connectionDto.address).toLowerCase();
+    await this.createEntity(twitterId, address, clientId);
+    await this.createRelations(credentials, twitterId, address, clientId);
+    await addConnection(address, TWITTER_CONNECTION_TYPE_ID, twitterId);
     return data;
   }
 
   async createEntity(id: string, address: string, clientId: string) {
     const twitterData = await TwitterApi.getUser(id);
-    console.log('creating entity');
     return this.saveEntity(
       {
         name: twitterData.username,
@@ -72,7 +63,6 @@ export class ConnectionsService {
     address: string,
     clientId: string,
   ) {
-    console.log('creating relations');
     await this.twitterRelationsQueue.add({
       credentials,
       id,
@@ -95,24 +85,16 @@ export class ConnectionsService {
    */
   async telegram(connectionDto: TelegramConnectionDto, telegramClientId) {
     const { userSession, user } = await TelegramAPI.verifyCode(connectionDto);
-
-    await this.createTelegramEntity(
-      user,
-      connectionDto.address,
-      telegramClientId,
-    );
+    const address = String(connectionDto.address).toLowerCase();
+    await this.createTelegramEntity(user, address, telegramClientId);
     await this.createTelegramRelations(
       user.id,
-      connectionDto.address,
+      address,
       userSession,
       telegramClientId,
     );
 
-    await addConnection(
-      connectionDto.address,
-      TELEGRAM_CONNECTION_TYPE_ID,
-      user.id,
-    );
+    await addConnection(address, TELEGRAM_CONNECTION_TYPE_ID, user.id);
 
     return {
       message: 'Linking data successful!',
@@ -129,7 +111,7 @@ export class ConnectionsService {
           address: address,
           telegram: Number(user.id.value),
         },
-        image: user.photo,
+        // image: user.photo,
         properties: {
           telegram_username: user.username,
         },
@@ -168,7 +150,7 @@ export class ConnectionsService {
       console.log('saved');
       return result;
     } catch (e) {
-      throw e;
+      console.log(e);
     }
   }
 }
