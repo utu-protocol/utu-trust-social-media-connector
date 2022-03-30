@@ -1,4 +1,5 @@
 import { OAuth, OAuth2 } from 'oauth';
+import { TWITTER_CONSUMER_KEY, TWITTER_CONSUMER_SECRET } from 'src/config';
 
 export type OathCredentials = {
   token: string;
@@ -9,8 +10,8 @@ export default class TwitterOauth {
     return new OAuth(
       'https://api.twitter.com/oauth/request_token',
       'https://api.twitter.com/oauth/access_token',
-      process.env.CONSUMER_KEY,
-      process.env.CONSUMER_SECRET,
+      TWITTER_CONSUMER_KEY,
+      TWITTER_CONSUMER_SECRET,
       '1.0',
       callbackUrl,
       'HMAC-SHA1',
@@ -19,8 +20,8 @@ export default class TwitterOauth {
 
   static getOAuth2() {
     return new OAuth2(
-      process.env.CONSUMER_KEY,
-      process.env.CONSUMER_SECRET,
+      TWITTER_CONSUMER_KEY,
+      TWITTER_CONSUMER_SECRET,
       'https://api.twitter.com/',
       null,
       'oauth2/token',
