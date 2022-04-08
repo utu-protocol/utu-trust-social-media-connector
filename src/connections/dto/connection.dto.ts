@@ -1,5 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumberString, IsPhoneNumber, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumberString,
+  IsPhoneNumber,
+  IsString,
+} from 'class-validator';
 
 export class ConnectionDto {
   @ApiProperty({
@@ -68,4 +73,6 @@ export class TelegramConnectionDto {
   // @IsNotEmpty()
   // @IsString()
   address: string;
+
+  password: string;
 }
