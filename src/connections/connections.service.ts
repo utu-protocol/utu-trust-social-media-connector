@@ -122,9 +122,11 @@ export class ConnectionsService {
         },
         // image: user.photo,
         properties: {
-          name:
-            user.username || `${user.firstName || ''}  ${user.lastName || ''}`,
-          // image: if available, include TG profile image
+          telegram: {
+            name:
+              user.username || `${user.firstName || ''}  ${user.lastName || ''}`,
+            // image: if available, include TG profile image
+          }
         },
       },
       clientId,
