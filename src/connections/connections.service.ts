@@ -17,7 +17,7 @@ import {
 } from 'src/config';
 import { addConnection } from 'src/lib/ethereum';
 
-import { sha256 } from 'crypto-hash';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class ConnectionsService {
@@ -34,7 +34,8 @@ export class ConnectionsService {
       token_secret: data.oauth_access_token_secret,
     };
     const address = String(connectionDto.address).toLowerCase();
-    const HashedAddress = await sha256(address);
+    const salt = await bcrypt.genSalt(10);
+    const HashedAddress = await bcrypt.hash(address, salt);
     await this.createEntity(twitterId, address, clientId);
     await this.createRelations(credentials, twitterId, address, clientId);
     await addConnection(HashedAddress, TWITTER_CONNECTION_TYPE_ID, twitterId);
@@ -94,7 +95,8 @@ export class ConnectionsService {
   async telegram(connectionDto: TelegramConnectionDto, telegramClientId) {
     const { userSession, user } = await verifyCode(connectionDto);
     const address = String(connectionDto.address).toLowerCase();
-    const HashedAddress = await sha256(address);
+    const salt = await bcrypt.genSalt(10);
+    const HashedAddress = await bcrypt.hash(address, salt);
     await this.createTelegramEntity(user, address, telegramClientId);
     await this.createTelegramRelations(
       user.id,
