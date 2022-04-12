@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsNotEmpty, IsPhoneNumber } from 'class-validator';
 
 export class TelegramLoginDto {}
 
@@ -8,6 +8,6 @@ export class TelegramTokenDto {
     description: 'Telegram user phone number',
   })
   @IsNotEmpty()
-  @IsString()
+  @IsPhoneNumber()
   phone_number: string;
 }
