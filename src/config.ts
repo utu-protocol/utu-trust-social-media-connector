@@ -21,3 +21,5 @@ export const NODE_URL = process.env.NODE_URL;
 export const TELEGRAM_CONNECTION_TYPE_ID = 2;
 export const TELEGRAM_API_ID = Number(process.env.TELEGRAM_API_ID);
 export const TELEGRAM_API_HASH = String(process.env.TELEGRAM_API_HASH);
+export const REDIS_HOST = process.env.REDIS_HOST;
+export const REDIS_PORT = String(process.env.REDIS_PORT || 6379);
