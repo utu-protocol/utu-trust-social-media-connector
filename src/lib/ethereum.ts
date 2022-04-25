@@ -2,6 +2,7 @@ import { ethers, utils, Wallet } from 'ethers';
 import { NODE_URL, UTT_CONTRACT_ADDRESS, UTT_PRIVATE_KEY } from 'src/config';
 import { BigInteger } from 'big-integer';
 
+import bcrypt from 'bcrypt';
 import CONTRACT_ABI from '../contracts/UTT.abi.json';
 
 let provider = null;
@@ -26,7 +27,9 @@ export async function addConnection(
   initProvider();
   console.log('add connection to the smart contract');
   const contract = await getContract();
-  const idHash = await utils.formatBytes32String(String(socialId));
+  const salt = await bcrypt.genSalt(10);
+  const HashedSocialId = await bcrypt.hash(socialId, salt);
+  const idHash = await utils.formatBytes32String(String(HashedSocialId));
   const feeData = await provider.getFeeData();
   const gas = await contract.estimateGas.addConnection(
     address,

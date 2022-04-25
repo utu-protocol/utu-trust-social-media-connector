@@ -17,7 +17,6 @@ import {
 } from 'src/config';
 import { addConnection } from 'src/lib/ethereum';
 
-import bcrypt from 'bcrypt';
 
 @Injectable()
 export class ConnectionsService {
@@ -34,11 +33,9 @@ export class ConnectionsService {
       token_secret: data.oauth_access_token_secret,
     };
     const address = String(connectionDto.address).toLowerCase();
-    const salt = await bcrypt.genSalt(10);
-    const HashedAddress = await bcrypt.hash(address, salt);
     await this.createEntity(twitterId, address, clientId);
     await this.createRelations(credentials, twitterId, address, clientId);
-    await addConnection(HashedAddress, TWITTER_CONNECTION_TYPE_ID, twitterId);
+    await addConnection(address, TWITTER_CONNECTION_TYPE_ID, twitterId);
     return data;
   }
 
@@ -95,8 +92,6 @@ export class ConnectionsService {
   async telegram(connectionDto: TelegramConnectionDto, telegramClientId) {
     const { userSession, user } = await verifyCode(connectionDto);
     const address = String(connectionDto.address).toLowerCase();
-    const salt = await bcrypt.genSalt(10);
-    const HashedAddress = await bcrypt.hash(address, salt);
     await this.createTelegramEntity(user, address, telegramClientId);
     await this.createTelegramRelations(
       user.id,
@@ -105,7 +100,7 @@ export class ConnectionsService {
       telegramClientId,
     );
 
-    await addConnection(HashedAddress, TELEGRAM_CONNECTION_TYPE_ID, user.id);
+    await addConnection(address, TELEGRAM_CONNECTION_TYPE_ID, user.id);
 
     return {
       message: 'Linking data successful!',
