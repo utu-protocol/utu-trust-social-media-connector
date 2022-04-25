@@ -43,10 +43,10 @@ export class telegramRelationConsumer {
           ids: {
             telegram: contact.id,
           },
-          bidirectional: false,
-          properties: {
-            kind: 'telegram',
-          },
+        },
+        bidirectional: false,
+        properties: {
+          kind: 'telegram',
         },
       };
     });

@@ -17,6 +17,7 @@ import {
 } from 'src/config';
 import { addConnection } from 'src/lib/ethereum';
 
+
 @Injectable()
 export class ConnectionsService {
   constructor(
