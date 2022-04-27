@@ -27,9 +27,9 @@ export async function addConnection(
   initProvider();
   console.log('add connection to the smart contract');
   const contract = await getContract();
-  const salt = await bcrypt.genSalt(10);
-  const HashedSocialId = await bcrypt.hash(socialId, salt);
-  const idHash = await utils.formatBytes32String(String(HashedSocialId));
+  const saltRounds = Number(10);
+  const HashedSocialId = await bcrypt.hash(String(socialId), saltRounds);
+  const idHash = await utils.id(HashedSocialId);
   const feeData = await provider.getFeeData();
   const gas = await contract.estimateGas.addConnection(
     address,
