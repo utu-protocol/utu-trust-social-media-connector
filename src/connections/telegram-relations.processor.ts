@@ -1,6 +1,7 @@
 import { Processor, Process, InjectQueue } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
 import { getContacts } from '../lib/telegramAPI';
+import { processTelegramRelationships } from './social-media-relations.processor';
 
 @Processor('telegram-relations')
 export class telegramRelationConsumer {
@@ -26,43 +27,12 @@ export class telegramRelationConsumer {
     console.log('processContacts');
     const contacts: any = await getContacts(userSession);
 
-    const telegramRelations = contacts.users.map((contact) => {
-      // return contact;
-      return {
-        type: 'social',
-        sourceCriteria: {
-          type: 'Address',
-          ids: {
-            uuid: address,
-            address: address,
-            telegram: id,
-          },
-        },
-        targetCriteria: {
-          type: 'Address',
-          ids: {
-            telegram: contact.id,
-          },
-        },
-        bidirectional: false,
-        properties: {
-          kind: 'telegram',
-        },
-      };
-    });
-
-    await this.sendRequests(telegramRelations, clientId);
-  }
-
-  private async sendRequests(relations: any[], clientId: string) {
-    await Promise.all(
-      relations.map(async (relation) => {
-        await this.saveRelationshipQueue.add({
-          relation,
-          clientId,
-        });
-        return relation;
-      }),
+    await processTelegramRelationships(
+      id,
+      address,
+      clientId,
+      contacts,
+      this.saveRelationshipQueue,
     );
   }
 }

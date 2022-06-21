@@ -2,6 +2,7 @@ import { Processor, Process, InjectQueue } from '@nestjs/bull';
 import { Job, Queue } from 'bull';
 import TwitterApi from 'src/lib/twitterAPI';
 import { OathCredentials } from 'src/lib/twitterOauth';
+import { processTwitterRelationships } from './social-media-relations.processor';
 
 type TwitterRelationData = {
   credentials: OathCredentials;
@@ -44,31 +45,14 @@ export class TwitterRelationConsumer {
     clientId,
   }: TwitterRelationData) {
     const followers = await TwitterApi.getFollowers(credentials, id, 500);
-    const relations = followers.data.map((follower) => {
-      // return follower;
-      return {
-        type: 'social',
-        sourceCriteria: {
-          type: 'Address',
-          ids: {
-            twitter: follower.id,
-          },
-        },
-        targetCriteria: {
-          type: 'Address',
-          ids: {
-            uuid: address,
-            address: address,
-            twitter: id,
-          }
-        },
-        bidirectional: false,
-        properties: {
-          kind: 'twitter',
-        }
-      };
-    });
-    await this.sendRequests(relations, clientId);
+
+    await processTwitterRelationships(
+      id,
+      address,
+      clientId,
+      followers,
+      this.saveRelationshipQueue,
+    );
   }
 
   async processFollowing({
@@ -78,42 +62,13 @@ export class TwitterRelationConsumer {
     clientId,
   }: TwitterRelationData) {
     const followers = await TwitterApi.getFollowings(credentials, id, 500);
-    const relations = followers.data.map((follower) => {
-      // return follower;
-      return {
-        type: 'social',
-        sourceCriteria: {
-          type: 'Address',
-          ids: {
-            uuid: address,
-            address: address,
-            twitter: id,
-          },
-        },
-        targetCriteria: {
-          type: 'Address',
-          ids: {
-            twitter: follower.id,
-          }
-        },
-        bidirectional: false,
-        properties: {
-          kind: 'twitter',
-        }
-      };
-    });
-    await this.sendRequests(relations, clientId);
-  }
 
-  private async sendRequests(relations: any[], clientId: string) {
-    await Promise.all(
-      relations.map(async (relation) => {
-        await this.saveRelationshipQueue.add({
-          relation,
-          clientId,
-        });
-        return relation;
-      }),
+    await processTwitterRelationships(
+      id,
+      address,
+      clientId,
+      followers,
+      this.saveRelationshipQueue,
     );
   }
 }
