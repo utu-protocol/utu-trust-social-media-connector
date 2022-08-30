@@ -31,14 +31,14 @@ export async function addConnection(
   const HashedSocialId = await bcrypt.hash(String(socialId), saltRounds);
   const idHash = await utils.id(HashedSocialId);
   const feeData = await provider.getFeeData();
-  const gas = await contract.estimateGas.addConnection(
-    address,
-    connectionId,
-    idHash,
-  );
+  // const gas = await contract.estimateGas.addConnection(
+  //   address,
+  //   connectionId,
+  //   idHash,
+  // );
   const gasPrice = feeData.gasPrice;
   console.log('gasPrice', gasPrice);
-  console.log('estimated', gas);
+  // console.log('estimated', gas);
   const tx = await contract.addConnection(address, connectionId, idHash, {
     gasPrice,
     // gasLimit: gas,
