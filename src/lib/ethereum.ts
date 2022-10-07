@@ -8,6 +8,7 @@ import CONTRACT_ABI from '../contracts/UTT.abi.json';
 let provider = null;
 
 export const initProvider = () => {
+  console.log('init ethers provider')
   provider = new ethers.providers.JsonRpcProvider(NODE_URL);
 };
 
@@ -43,6 +44,6 @@ export async function addConnection(
     gasPrice,
     // gasLimit: gas,
   });
-  console.log(tx);
+  console.log(`UTT Tokens sent to ${address}`);
   return tx;
 }

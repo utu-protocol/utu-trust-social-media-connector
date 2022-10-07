@@ -35,6 +35,7 @@ export class ConnectionsService {
     const address = String(connectionDto.address).toLowerCase();
     await this.createEntity(twitterId, address, clientId);
     await this.createRelations(credentials, twitterId, address, clientId);
+    console.log('twitter connected');
     await addConnection(address, TWITTER_CONNECTION_TYPE_ID, twitterId);
     return data;
   }
@@ -99,7 +100,6 @@ export class ConnectionsService {
       userSession,
       telegramClientId,
     );
-
     await addConnection(address, TELEGRAM_CONNECTION_TYPE_ID, user.id);
 
     return {
