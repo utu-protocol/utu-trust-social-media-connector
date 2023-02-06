@@ -5,7 +5,7 @@ import redisClient from './redis-client';
 import MTProto from '@mtproto/core';
 import path from 'path';
 
-async function getSession(key) {
+async function getSession(key): Promise<StringSession | null> {
   const session = await redisClient.get(key);
   if (session) {
     return new StringSession(session);
@@ -23,9 +23,14 @@ function getMtProto() {
   });
 }
 
-async function initClient(session?, sessionId = null): Promise<TelegramClient> {
+export async function initClient(
+  session: StringSession | null = null,
+): Promise<TelegramClient> {
+  const currentSession = session || new StringSession('');
+  await currentSession.load();
+
   const client = new TelegramClient(
-    session || new StringSession(''),
+    currentSession,
     TELEGRAM_API_ID,
     TELEGRAM_API_HASH,
     {
@@ -36,17 +41,17 @@ async function initClient(session?, sessionId = null): Promise<TelegramClient> {
       // autoReconnect: true,
     },
   );
-
   await client.connect();
-  if (sessionId) {
-    const store = await client.session.save();
-    await redisClient.set(sessionId, String(store));
-  }
   return client;
 }
 
+const saveSession = async (client, sessionId: string) => {
+  const store = await client.session.save();
+  await redisClient.set(sessionId, String(store));
+};
+
 export const getLoginToken = async ({ phone_number }) => {
-  const client = await initClient(null, phone_number);
+  const client = await initClient();
   const { phoneCodeHash }: any = await client.invoke(
     new Api.auth.SendCode({
       phoneNumber: phone_number,
@@ -59,6 +64,8 @@ export const getLoginToken = async ({ phone_number }) => {
       }),
     }),
   );
+
+  await saveSession(client, phoneCodeHash);
 
   return {
     message: 'Code sent successfully, check your telegram app.',
@@ -120,7 +127,7 @@ export const verifyCode = async ({
   phone_code,
   password,
 }) => {
-  const session = await getSession(phone_number);
+  const session = await getSession(phone_code_hash);
   const client = await initClient(session);
   let user: Api.User;
   if (password) {
